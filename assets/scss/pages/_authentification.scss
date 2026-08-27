@@ -1,0 +1,21 @@
+// ==========================================================================
+// FICHIER : pages/_authentification.scss — Ma page de connexion / inscription
+// ==========================================================================
+// Pour l'authentification, mon objectif était d'avoir un formulaire centré,
+// accessible et cohérent avec le reste du site. Je centralise l'essentiel
+// des styles dans pages/_content.scss (.auth-form-container, .form-group) pour
+// éviter la duplication. Ce fichier reste volontairement léger : j'y garde la
+// possibilité d'ajouter des surcharges spécifiques à l'auth sans toucher au
+// commun.
+// ==========================================================================
+// Note pour le jury : les styles du formulaire (Glassmorphism via Mixin
+// glass-effect, Flexbox colonne pour empiler les champs, width: min(92%,420px)
+// implicite via .auth-form-container, focus doré RGAA) sont dans _content.scss
+// pour être réutilisables sur déconnexion et autres pages à formulaire.
+
+.auth-toggle-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}

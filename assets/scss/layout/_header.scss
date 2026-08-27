@@ -1,0 +1,76 @@
+// ==========================================================================
+// FICHIER : layout/_header.scss — Mon en-tête fixe en verre givré
+// ==========================================================================
+// Pour l'en-tête, mon objectif était de créer une barre flottante haut de
+// gamme qui reste lisible sur la photo de jungle. J'utilise Flexbox pour
+// aligner logo/tagline/bouton et mon Mixin glass-effect pour le Glassmorphism.
+// ==========================================================================
+
+#main-header {
+    margin: 15px; 
+    padding: 15px 30px;                         
+    // Je passe en Flexbox : c'est le plus simple pour aligner logo à gauche
+    // et bouton hamburger à droite sur la même ligne
+    display: flex;                               
+    align-items: center;                         
+    // space-between pousse le logo à gauche et le menu à droite automatiquement
+    justify-content: space-between;
+    border-radius: 20px;                        
+    position: relative;
+    // z-index 110 : je reste au-dessus de la sidebar (z-index 100) pour que
+    // le bouton hamburger reste toujours cliquable même quand le menu est ouvert
+    z-index: 110;
+
+    // J'appelle mon Mixin glass-effect : fond semi-transparent + backdrop-filter blur(20px)
+    // C'est ma signature visuelle "verre dépoli" qui laisse entrevoir la forêt derrière
+    @include glass-effect; 
+
+    // Mon logo image
+    img {
+        height: 50px;       
+        width: auto;
+        
+        // Je réduis le logo via mon Mixin respond-to pour qu'il ne mange pas tout l'espace sur mobile
+        @include respond-to('sm') {
+            height: 40px;
+        }
+        @include respond-to('xs') {
+            height: 35px;
+        }
+    }
+
+    // Mon sous-titre en Cinzel léger
+    .header-tagline {
+        font-family: $font-titles;
+        font-size: 20px;  
+        font-weight: 300;   
+        letter-spacing: 1px;
+        // flex-grow: 1 : je prends tout l'espace restant entre logo et bouton pour bien répartir
+        flex-grow: 1; 
+        text-align: left;
+        margin-left: 20px;
+        color: $clr-gold;
+        
+        @include respond-to('md') {
+            font-size: 16px;
+        }
+        @include respond-to('sm') {
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        @include respond-to('xs') {
+            // Je cache le texte sur très petit écran : je garde seulement logo + hamburger pour ne pas surcharger
+            display: none;
+        }
+    }
+
+    // Je resserre les marges/paddings sur mobile pour gagner de la place utile
+    @include respond-to('xs') {
+        margin: 10px;
+        padding: 10px 15px;
+    }
+    @include respond-to('micro') {
+        margin: 5px;
+        padding: 8px 10px;
+    }
+}

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<!-- Page branchee sur /assets/js/data/*.json via db.js (simulation Supabase) - 100% dynamique -->
+<html lang="fr">
+
+<head>
+    <?php require_once 'includes/head.php'; ?>
+    <title>Ma collection - Mes Orchidées</title>
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">Aller au contenu</a>
+
+    <?php require_once 'includes/sidebar.php'; ?>
+
+    <header id="main-header" role="banner">
+        <img src="./assets/images/site/logotransparent.png" alt="Logo de Mes Orchidées">
+        <p class="header-tagline">Encyclopédie &amp; gestion de collections</p>
+        <button type="button" class="menu-toggle" id="menu-toggle-btn" aria-label="Ouvrir ou fermer le menu"
+            aria-controls="main-sidebar" aria-expanded="false">
+            <span class="hamburger-bar"></span>
+        </button>
+    </header>
+
+    <main class="main-content" id="main-content">
+        <section class="collection-header" aria-label="Ma collection">
+            <h1 class="page-title">MA COLLECTION</h1>
+        </section>
+
+        <div id="collection-guest-message" class="collection-guest-message" hidden>
+            <p>Veuillez vous <a href="authentification.php">connecter</a> pour accéder à votre collection.</p>
+        </div>
+
+        <div id="collection-app" class="collection-app" hidden>
+            <!-- Carte d'identité du propriétaire : prouve que la collection appartient bien à la personne connectée -->
+            <!-- Elle affiche les vraies données de la table users dans /assets/js/data/users.json via db.js -->
+            <section id="user-identity-card" class="user-identity-card" aria-label="Carte d'identité du propriétaire">
+                <div class="user-identity-header">
+                    <i class="fa-solid fa-id-card" aria-hidden="true"></i>
+                    <h3>PROPRIÉTAIRE DE LA COLLECTION</h3>
+                    <span id="user-identity-badge" class="user-role-badge">-</span>
+                </div>
+                <div class="user-identity-body">
+                    <img id="user-avatar" src="./assets/images/site/logotransparent.png" alt="Avatar du propriétaire"
+                        class="user-avatar">
+                    <div class="user-identity-infos">
+                        <p class="user-fullname"><strong id="user-fullname">-</strong></p>
+                        <p class="user-email"><i class="fa-solid fa-envelope" aria-hidden="true"></i> <span
+                                id="user-email">-</span></p>
+                        <p class="user-meta"><span id="user-role-detail">-</span> • <span id="user-id">ID: -</span></p>
+                        <p class="user-dates"><i class="fa-solid fa-calendar" aria-hidden="true"></i> <span
+                                id="user-created">Créé le : -</span> • <span id="user-modified">Modifié le : -</span>
+                        </p>
+                        <p class="user-plant-count"><i class="fa-solid fa-seedling" aria-hidden="true"></i> <span
+                                id="user-plant-count">0 plante(s)</span> dans la collection</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="collection-dashboard" aria-label="Tableau de bord">
+                <article class="dash-card dash-plants" aria-label="Statistiques des plantes">
+                    <h3>PLANTES</h3>
+                    <ul id="dash-plants-stats">
+                        <li><span>Total</span><strong id="stat-total">0</strong></li>
+                        <li><span>Épiphytes</span><strong id="stat-epiphytes">0</strong></li>
+                        <li><span>Terrestres</span><strong id="stat-terrestres">0</strong></li>
+                        <li><span>Hémi-épiphytes</span><strong id="stat-hemi">0</strong></li>
+                    </ul>
+                </article>
+
+                <article class="dash-card dash-climate" aria-label="Climat moyen de la collection">
+                    <h3>CLIMAT</h3>
+                    <div class="dash-climate-values" id="dash-climate-values">
+                        <div class="climate-item"><i class="fa-solid fa-temperature-half" aria-hidden="true"></i><strong
+                                id="climate-temp">—</strong></div>
+                        <div class="climate-item"><i class="fa-solid fa-droplet" aria-hidden="true"></i><strong
+                                id="climate-humidity">—</strong></div>
+                        <div class="climate-item"><i class="fa-solid fa-sun" aria-hidden="true"></i><strong
+                                id="climate-light">—</strong></div>
+                    </div>
+                </article>
+
+                <article class="dash-card dash-notifications" aria-label="Notifications">
+                    <h3>NOTIFICATIONS</h3>
+                    <ul id="dash-notifications">
+                        <li><i class="fa-solid fa-bell" aria-hidden="true"></i><span class="notif-dot notif-orange"
+                                aria-hidden="true"></span><span>Soins à prévoir</span></li>
+                        <li><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span
+                                class="notif-dot notif-green" aria-hidden="true"></span><span>Alertes</span></li>
+                        <li><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i><span
+                                class="notif-dot notif-green" aria-hidden="true"></span><span>Bilan santé</span></li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="collection-workspace" aria-label="Espace de gestion">
+                <div class="collection-panel">
+                    <div class="care-panel-header" style="margin-bottom: 20px;">
+                        <h2 class="panel-title" style="margin-bottom: 0;">COLLECTION</h2>
+                        <button type="button" class="btn-new-care" id="btn-add-collection-orchid" aria-label="Ajouter une orchidée à la collection">+</button>
+                    </div>
+                    <div id="collection-grid" class="collection-grid"></div>
+                </div>
+
+                <div class="side-panels">
+                    <div class="care-panel">
+                        <div class="care-panel-header">
+                            <h2 class="panel-title">SOINS</h2>
+                            <button type="button" class="btn-new-care" id="btn-new-care"
+                                aria-label="Ajouter un nouveau soin">+</button>
+                        </div>
+                        <div class="care-table-wrap">
+                            <table class="care-table" id="care-table" aria-label="Historique des soins">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Soin effectué</th>
+                                        <th>Rappel</th>
+                                        <th>Date rappel</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="care-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="conseil-panel">
+                        <h2 class="panel-title">CONSEILS</h2>
+                        <div id="conseil-preview" class="conseil-preview"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="main-footer" role="contentinfo">
+        <div class="footer-links-group"><a href="mentions.php" class="footer-link">Mentions légales</a><a
+                href="accessibilite.php" class="footer-link">Accessibilité</a></div>
+        <div class="footer-center">
+            <img src="./assets/images/site/logotransparent.png" alt="Logo de Mes Orchidées">
+            <p>&copy; Mes Orchidées - Projet Fil Rouge DWWM - Jeremy Ferrier - 2026/2027</p>
+        </div>
+        <a href="confidentialite.php" class="footer-link">Politiques de confidentialité</a>
+    </footer>
+
+    <!-- MODALE 0 : AJOUTER UNE ORCHIDÉE À LA COLLECTION -->
+    <section class="modal-overlay" id="add-collection-modal" aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="add-modal-title">
+        <div class="modal-container collection-modal" role="document">
+            <button type="button" class="modal-close" id="add-modal-close" aria-label="Fermer la fenêtre">×</button>
+
+            <div class="collection-modal-header">
+                <div class="collection-modal-titles">
+                    <h2 id="add-modal-title" class="collection-modal-title">AJOUTER À LA COLLECTION</h2>
+                    <p class="collection-modal-short">Recherchez une orchidée ou proposez-en une nouvelle.</p>
+                </div>
+            </div>
+
+            <div class="collection-modal-personal" style="border-top: none; padding-top: 10px;">
+                <form id="add-collection-form">
+                    <!-- Zone Recherche / Autocomplete -->
+                    <div class="form-group" style="position: relative;">
+                        <label for="add-orchid-name">Nom de l'orchidée *</label>
+                        <input type="text" id="add-orchid-name" class="edit-input" placeholder="Ex: Phalaenopsis..."
+                            autocomplete="off" required>
+                        <div id="add-orchid-suggestions" class="autocomplete-suggestions glassmorphism"
+                            style="display: none; background: rgba(14, 32, 24, 0.95); border: 1px solid var(--color-gold);">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-orchid-behavior">Comportement *</label>
+                        <select id="add-orchid-behavior" class="edit-input" required>
+                            <option value="">-- Sélectionner --</option>
+                            <option value="Épiphyte">Épiphyte</option>
+                            <option value="Terrestre">Terrestre</option>
+                            <option value="Lithophyte">Lithophyte</option>
+                            <option value="Hémi-épiphyte">Hémi-épiphyte</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="add-orchid-origin">Origine(s)</label>
+                        <input type="text" id="add-orchid-origin" class="edit-input"
+                            placeholder="Ex: Amérique du Sud...">
+                    </div>
+
+                    <!-- Informations Botaniques (Optionnelles mais auto-remplies si connue) -->
+                    <h4 style="margin-top: 20px;">TAXONOMIE (OPTIONNEL)</h4>
+                    <div class="personal-fields">
+                        <div class="form-group">
+                            <label for="add-orchid-order">Ordre</label>
+                            <input type="text" id="add-orchid-order" class="edit-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="add-orchid-family">Famille</label>
+                            <input type="text" id="add-orchid-family" class="edit-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="add-orchid-genre">Genre</label>
+                            <input type="text" id="add-orchid-genre" class="edit-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="add-orchid-species">Espèce</label>
+                            <input type="text" id="add-orchid-species" class="edit-input">
+                        </div>
+                    </div>
+
+                    <!-- Checkbox pour proposer à l'Encyclopédie (Masquée si la plante est connue) -->
+                    <div class="form-group" id="add-propose-container"
+                        style="display: flex; align-items: center; gap: 10px; margin-top: 20px;">
+                        <input type="checkbox" id="add-propose-checkbox" style="width: auto;">
+                        <label for="add-propose-checkbox"
+                            style="color: var(--color-tan); font-style: italic; font-size: 0.9rem;">
+                            Je souhaite proposer cette orchidée à l'Encyclopédie.
+                        </label>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-top: 20px; justify-content: flex-end;">
+                        <button type="button" class="btn-secondary" id="add-modal-cancel"
+                            style="padding: 10px 20px; border-radius: 20px;">Annuler</button>
+                        <button type="submit" class="btn-primary" id="add-modal-save"
+                            style="padding: 10px 20px; border-radius: 20px;">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODALE 1 : FICHE DE L'ORCHIDÉE (ÉDITION / AFFICHAGE) -->
+    <section class="modal-overlay" id="edit-collection-modal" aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="edit-modal-title">
+        <div class="modal-container collection-modal" role="document">
+            <button type="button" class="modal-close" id="edit-modal-close" aria-label="Fermer la fiche">×</button>
+
+            <div class="collection-modal-header">
+                <img id="edit-modal-img" src="" alt="" aria-hidden="true" class="modal-orchid-img">
+                <div class="collection-modal-titles">
+                    <h2 id="edit-modal-title" class="collection-modal-title"></h2>
+                    <p id="edit-modal-short" class="collection-modal-short"></p>
+                </div>
+            </div>
+
+            <div class="collection-modal-fields" id="edit-modal-fields"></div>
+
+            <div class="collection-modal-desc">
+                <h4>DESCRIPTION &amp; CARACTÉRISTIQUES</h4>
+                <p id="edit-modal-long"></p>
+            </div>
+
+            <div class="collection-modal-personal">
+                <h4>INFORMATIONS PERSONNELLES</h4>
+                <div class="personal-fields">
+                    <div class="form-group">
+                        <label for="edit-location">Site de culture (Emplacement)</label>
+                        <input type="text" id="edit-location" class="edit-input" placeholder="Ex : Salon, Véranda...">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-temp">Température du site</label>
+                        <input type="text" id="edit-temp" class="edit-input" placeholder="Ex : 20-25°C">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hygro">Hygrométrie du site</label>
+                        <input type="text" id="edit-hygro" class="edit-input" placeholder="Ex : 60-70%">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-light">Luminosité du site</label>
+                        <input type="text" id="edit-light" class="edit-input"
+                            placeholder="Ex : Vive sans soleil direct">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-ventilation">Ventilation du site</label>
+                        <input type="text" id="edit-ventilation" class="edit-input"
+                            placeholder="Ex : Bonne ventilation">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-notes">Notes complémentaires</label>
+                        <textarea id="edit-notes" class="edit-textarea" rows="3"
+                            placeholder="Notes de culture..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collection-modal-actions">
+                <button type="button" class="btn-validate" id="edit-modal-save">VALIDER</button>
+                <button type="button" class="btn-cancel" id="edit-modal-cancel">ANNULER</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="modal-overlay" id="care-modal" aria-hidden="true" role="dialog" aria-modal="true"
+        aria-labelledby="care-modal-title">
+        <div class="modal-container care-modal" role="document">
+            <button type="button" class="modal-close" id="care-modal-close" aria-label="Fermer le formulaire">×</button>
+            <h2 id="care-modal-title" class="care-modal-title">NOUVEAU SOIN</h2>
+
+            <form id="care-form" class="care-form">
+                <input type="hidden" name="csrf_token" id="csrf-token" value="">
+                <div class="care-form-grid">
+                    <div class="form-group">
+                        <label for="care-orchid">Orchidée</label>
+                        <select id="care-orchid" class="edit-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="care-date">Date</label>
+                        <input type="date" id="care-date" class="edit-input" required>
+                    </div>
+                    <fieldset class="form-group care-checks">
+                        <legend>Soins effectués</legend>
+                        <label><input type="checkbox" name="careType" value="arrosage"> Arrosage</label>
+                        <label><input type="checkbox" name="careType" value="rempotage"> Rempotage</label>
+                        <label><input type="checkbox" name="careType" value="traitement"> Traitement</label>
+                        <label><input type="checkbox" name="careType" value="nutrition"> Nutrition</label>
+                    </fieldset>
+                    <div class="form-group">
+                        <label for="care-engrais">Type d'engrais</label>
+                        <input type="text" id="care-engrais" class="edit-input" placeholder="Ex : 20-20-20">
+                    </div>
+                    <div class="form-group">
+                        <label for="care-substrat">Type de substrat</label>
+                        <input type="text" id="care-substrat" class="edit-input" placeholder="Ex : Écorces de pin">
+                    </div>
+                    <div class="form-group">
+                        <label for="care-ravageurs">Ravageurs</label>
+                        <input type="text" id="care-ravageurs" class="edit-input" placeholder="Aucun">
+                    </div>
+                    <fieldset class="form-group care-cycles">
+                        <legend>Cycle de la plante</legend>
+                        <label><input type="checkbox" name="careCycle" value="repos"> Repos</label>
+                        <label><input type="checkbox" name="careCycle" value="croissance"> Croissance</label>
+                        <label><input type="checkbox" name="careCycle" value="floraison"> Floraison</label>
+                    </fieldset>
+                </div>
+
+                <div class="care-history-section">
+                    <h3>HISTORIQUE DES SOINS</h3>
+                    <div id="care-modal-history" class="care-history-table"></div>
+                </div>
+
+                <div class="collection-modal-actions">
+                    <button type="submit" class="btn-validate">VALIDER</button>
+                    <button type="button" class="btn-cancel" id="care-modal-cancel">ANNULER</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script type="module" src="./assets/js/app.js"></script>
+
+</body>
+
+</html>

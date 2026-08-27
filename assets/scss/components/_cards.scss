@@ -1,0 +1,103 @@
+// ==========================================================================
+// FICHIER : components/_cards.scss — Mes cartes d'orchidées en verre givré
+// ==========================================================================
+// Pour les cartes, mon objectif était d'avoir un composant compact, fluide et
+// réutilisable partout (encyclopédie, collection, accueil). J'utilise Flexbox
+// colonne pour empiler image/texte/bouton, clamp() pour la fluidité des
+// tailles et mon Mixin glass-effect pour le Glassmorphism.
+// ==========================================================================
+
+.orchid-card {
+  // Je supprime la largeur fixe héritée du mockup : je veux du fluide
+  width: 100% !important;
+  max-width: 240px;
+  min-height: 280px;
+  height: auto !important;
+  margin: 0 auto;
+  padding: 16px !important;
+  // Flexbox colonne : j'empile image en haut, infos au centre, bouton en bas
+  display: flex;
+  flex-direction: column;
+  // space-between pousse le bouton en bas même si les textes sont courts
+  justify-content: space-between;
+  border-radius: 12px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+  
+  @include respond-to('xs') {
+      min-height: 250px;
+      padding: 12px !important;
+  }
+  
+  @include respond-to('micro') {
+      min-height: auto;
+      max-width: 100%;
+  }
+
+  // J'applique mon Mixin glass-effect : toutes mes cartes ont le même verre dépoli
+  @include glass-effect;
+
+  &:hover {
+      // Je soulève la carte de 5px au survol pour l'effet interactif
+      transform: translateY(-5px);
+      border-color: $clr-gold;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 110px;
+    // object-fit contain : je garde les proportions de la photo sans la couper
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+
+  .card-info {
+    h3 {
+      // clamp() fluide : le titre passe de 13px (mobile) à 15px (desktop) sans media query
+      font-size: clamp(13px, 2vw, 15px);
+      white-space: normal;
+      text-align: center;
+      margin: 0;
+      color: $clr-gold;
+      font-family: $font-titles;
+    }
+    
+    .vernacular-name {
+        font-family: $font-body;
+        font-size: 9px;
+        opacity: 0.8;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .short-desc {
+      font-size: 12px;
+      line-height: 1.3;
+      margin: 6px 0;
+      text-align: center;
+      opacity: 0.9;
+      // Je coupe proprement à 4 lignes avec ellipsis : pas de carte à hauteur variable
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-btn {
+        background-color: #c4a47c;
+        color: #0e2018;
+        border: none;
+        padding: 5px 18px;
+        border-radius: 20px;
+        font-family: $font-titles;
+        font-size: 9px;
+        font-weight: bold;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+  }
+}

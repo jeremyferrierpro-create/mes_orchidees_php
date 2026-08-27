@@ -1,0 +1,281 @@
+<?php
+require_once __DIR__ . '/api/middleware/auth.php';
+
+$admin = getCurrentUser();
+if (!$admin || ($admin['role'] ?? null) !== 'admin') {
+    header('Cache-Control: no-store, private');
+    header('Location: authentification.php', true, 302);
+    exit;
+}
+?>
+<!DOCTYPE html>
+<!-- Page reservee aux administrateurs verifies cote serveur. -->
+<html lang="fr">
+
+<head>
+    <?php require_once 'includes/head.php'; ?>
+    <title>Administration - Mes Orchidées</title>
+</head>
+
+<body>
+    <a class="skip-link" href="#main-content">Aller au contenu</a>
+
+    <?php require_once 'includes/sidebar.php'; ?>
+
+<header id="main-header" role="banner">
+        <img src="./assets/images/site/logotransparent.png" alt="Logo de Mes Orchidées">
+        <p class="header-tagline">Encyclopédie & gestion de collections</p>
+        <p id="admin-badge" style="margin-top:12px; color:#c4a47c; font-weight:600;"></p>
+        <button type="button" class="menu-toggle" id="menu-toggle-btn" aria-label="Ouvrir ou fermer le menu"
+            aria-controls="main-sidebar" aria-expanded="false">
+            <span class="hamburger-bar"></span>
+        </button>
+    </header>
+
+    <main class="main-content" id="main-content">
+        <section class="admin-header text-center" aria-label="Administration">
+            <!-- J'ai enlevé le style en dur, il est maintenant dans _admin.scss -->
+            <h1 class="page-title">ADMINISTRATION</h1>
+        </section>
+
+        <!-- DASHBOARD -->
+        <section class="admin-dashboard-section" aria-label="Tableau de bord">
+            <div class="admin-dash-cards">
+                <!-- Carte Utilisateurs -->
+                <div class="admin-dash-card">
+                    <h3>UTILISATEURS</h3>
+                    <div class="admin-dash-grid">
+                        <div class="dash-stat"><span>TOTAL</span><strong id="stat-users-total">0</strong></div>
+                        <div class="dash-stat"><span>MENSUEL</span><strong id="stat-users-monthly">0</strong></div>
+                        <div class="dash-stat"><span>SEMAINE</span><strong id="stat-users-weekly">0</strong></div>
+                        <div class="dash-stat"><span>LE + DE PLANTES</span><strong id="stat-users-active">0</strong></div>
+                    </div>
+                </div>
+
+                <!-- Carte Plantes -->
+                <div class="admin-dash-card">
+                    <h3>PLANTES</h3>
+                    <div class="admin-dash-grid">
+                        <div class="dash-stat"><span>TOTAL</span><strong id="stat-plants-total">0</strong></div>
+                        <div class="dash-stat"><span>PHARE</span><strong id="stat-plants-phare">-</strong></div>
+                        <div class="dash-stat"><span>DÉTENUES</span><strong id="stat-plants-owned">0</strong></div>
+                        <div class="dash-stat"><span>LA + RARE</span><strong id="stat-plants-rare">-</strong></div>
+                    </div>
+                </div>
+
+                <!-- Carte Activités -->
+                <div class="admin-dash-card">
+                    <h3>ACTIVITÉS</h3>
+                    <div class="admin-dash-grid">
+                        <div class="dash-stat"><span>EN ATTENTE</span><strong id="stat-act-pending">0</strong></div>
+                        <div class="dash-stat"><span>CONSEILS</span><strong id="stat-act-advices">0</strong></div>
+                        <div class="dash-stat"><span>VALIDÉE</span><strong id="stat-act-approved">0</strong></div>
+                        <div class="dash-stat"><span>REFUSÉE</span><strong id="stat-act-rejected">0</strong></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GESTION ENCYCLOPÉDIE -->
+        <section class="admin-encyclopedia-section" aria-label="Gestion de l'Encyclopédie">
+            <h2 class="admin-section-title">GESTION DE L'ENCYCLOPÉDIE</h2>
+            <div class="admin-table-container">
+                <div class="admin-table-header">
+                    <div class="col-nom">NOM</div>
+                    <div class="col-etat">ÉTAT</div>
+                    <div class="col-origines">ORIGINES</div>
+                    <div class="col-decouverte">DÉCOUVERTE PAR</div>
+                    <div class="col-actions">ACTIONS</div>
+                </div>
+                <div class="admin-table-body" id="admin-encyclopedia-list">
+                    <!-- Les lignes seront injectées en JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ACTIONS & NOTIFICATIONS -->
+        <section class="admin-bottom-section">
+            <div class="admin-big-actions">
+                <button type="button" class="admin-big-btn btn-tan" id="btn-moderate-orchid">
+                    MODÉRER UN<br>AJOUT<br>D'ORCHIDÉE
+                </button>
+                <button type="button" class="admin-big-btn btn-green" id="btn-add-advice">
+                    AJOUTER UN<br>NOUVEAU<br>CONSEIL
+                </button>
+                <!-- Bouton demandé : je le garde, il est maintenant bien intégré au design du mockup -->
+                <button type="button" class="admin-big-btn btn-outline" id="btn-manage-users">
+                    GÉRER LES<br>UTILISATEURS
+                </button>
+            </div>
+
+            <div class="admin-notifications-container">
+                <h2 class="admin-section-title">NOTIFICATIONS</h2>
+                <div class="admin-table-container">
+                    <div class="admin-table-header">
+                        <div class="col-date">DATE</div>
+                        <div class="col-notif">NOTIFICATION</div>
+                        <div class="col-actions">ACTIONS</div>
+                    </div>
+                    <div class="admin-table-body" id="admin-notifications-list">
+                        <!-- Notifications injectées en JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODALE FICHE UTILISATEUR -->
+    <div id="modal-user-form" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-user-title"
+        aria-hidden="true">
+        <div class="modal-container admin-form-modal">
+            <button type="button" class="modal-close" id="modal-user-close"
+                aria-label="Fermer la modale">&times;</button>
+            <h2 id="modal-user-title" class="admin-modal-title">FICHE UTILISATEUR</h2>
+
+            <form id="admin-user-form" class="admin-elegant-form">
+                <div class="form-row">
+                    <label for="user-nom">NOM</label>
+                    <input type="text" id="user-nom" class="pill-input" required>
+                    <label for="user-prenom" style="margin-left:1rem;">PRÉNOM</label>
+                    <input type="text" id="user-prenom" class="pill-input" required>
+                </div>
+                <div class="form-row">
+                    <label for="user-email">EMAIL</label>
+                    <input type="email" id="user-email" class="pill-input full-width" required>
+                </div>
+                <div class="form-row">
+                    <label for="user-role">RÔLE</label>
+                    <select id="user-role" class="pill-input full-width">
+                        <option value="user">Utilisateur</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-footer-dates">
+                    <span id="user-created-date">Créé le : --/--/----</span>
+                    <span id="user-modified-date">Modifié le : --/--/----</span>
+                </div>
+
+                <div class="admin-modal-actions">
+                    <button type="submit" class="btn-tan">VALIDER</button>
+                    <button type="button" class="btn-tan btn-cancel" id="btn-cancel-user">ANNULER</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODALE MODÉRATION ORCHIDÉE -->
+    <div id="modal-moderate-orchid" class="modal-overlay" role="dialog" aria-modal="true"
+        aria-labelledby="modal-mod-title" aria-hidden="true">
+        <div class="modal-container">
+            <button type="button" class="modal-close" id="modal-mod-close"
+                aria-label="Fermer la fenêtre">&times;</button>
+
+            <div class="orchid-modal-view">
+                <div class="modal-header-block">
+                    <img id="mod-orchid-img" src="" alt="" aria-hidden="true" class="modal-orchid-img">
+                    <div class="modal-title-group">
+                        <h2 id="modal-mod-title">TITRE</h2>
+                        <p id="mod-orchid-scientific" class="modal-scientific">SCIENTIFIQUE</p>
+                        <p id="mod-orchid-vernacular" class="modal-subtitle">VERNACULAIRE</p>
+                        <h2 class="modal-label-desc">DESCRIPTION COURTE :</h2>
+                        <p id="mod-orchid-short" class="modal-short-text">...</p>
+                    </div>
+                </div>
+
+                <div class="modal-specs-grid">
+                    <div class="spec-item"><span class="spec-label">Ordre</span>
+                        <div id="mod-spec-ordre" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Espèce</span>
+                        <div id="mod-spec-espece" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Genre</span>
+                        <div id="mod-spec-genre" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Famille</span>
+                        <div id="mod-spec-famille" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Sous-Famille</span>
+                        <div id="mod-spec-subfamily" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Tribu</span>
+                        <div id="mod-spec-tribu" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Sous-Tribu</span>
+                        <div id="mod-spec-subtribu" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Comportement</span>
+                        <div id="mod-spec-behavior" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item"><span class="spec-label">Découverte par</span>
+                        <div id="mod-spec-discovered" class="spec-value">...</div>
+                    </div>
+                    <div class="spec-item spec-item--full"><span class="spec-label">Origines</span>
+                        <div id="mod-spec-origin" class="spec-value">...</div>
+                    </div>
+                </div>
+
+                <div class="modal-description-block">
+                    <h2>Description &amp; Caractéristiques</h2>
+                    <p id="mod-orchid-long" class="modal-long-desc">...</p>
+                </div>
+
+                <div class="modal-footer-action admin-mod-actions">
+                    <button type="button" class="btn-tan" id="btn-approve-orchid">APPROUVER</button>
+                    <button type="button" class="btn-tan" id="btn-reject-orchid">REFUSER</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE AJOUT CONSEIL -->
+    <div id="modal-add-advice" class="modal-overlay" role="dialog" aria-modal="true"
+        aria-labelledby="modal-advice-title" aria-hidden="true">
+        <div class="modal-container admin-form-modal">
+            <button type="button" class="modal-close" id="modal-advice-close"
+                aria-label="Fermer la modale">&times;</button>
+            <h2 id="modal-advice-title" class="admin-modal-title">AJOUTER UN CONSEIL</h2>
+
+            <form id="admin-advice-form" class="admin-elegant-form">
+                <div class="form-row">
+                    <label for="adv-name">NOM / TITRE</label>
+                    <input type="text" id="adv-name" class="pill-input full-width" required>
+                </div>
+                <div class="form-row">
+                    <label for="adv-cat">CATÉGORIE</label>
+                    <select id="adv-cat" class="pill-input full-width" required>
+                        <option value="Entretien & Soins">Entretien & Soins</option>
+                        <option value="Floraison">Floraison</option>
+                        <option value="Maladies">Maladies</option>
+                    </select>
+                </div>
+                <div class="form-row" style="flex-direction:column; align-items:flex-start;">
+                    <label for="adv-content" style="margin-bottom:0.5rem;">CONTENU</label>
+                    <textarea id="adv-content" class="pill-input full-width" rows="5" required
+                        style="border-radius:15px; padding:15px;"></textarea>
+                </div>
+                <div class="admin-modal-actions">
+                    <button type="submit" class="btn-tan">VALIDER</button>
+                    <button type="button" class="btn-tan btn-cancel" id="btn-cancel-advice">ANNULER</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer id="main-footer" role="contentinfo">
+        <div class="footer-links-group"><a href="mentions.php" class="footer-link">Mentions légales</a><a href="accessibilite.php" class="footer-link">Accessibilité</a></div>
+        <div class="footer-center">
+            <img src="./assets/images/site/logotransparent.png" alt="Logo de Mes Orchidées">
+            <p>&copy; Mes Orchidées - Projet Fil Rouge DWWM - Jeremy Ferrier - 2026/2027</p>
+        </div>
+        <a href="confidentialite.php" class="footer-link">Politiques de confidentialité</a>
+    </footer>
+
+    <script type="module" src="./assets/js/app.js"></script>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,35 @@
+// ==========================================================================
+// FICHIER : pages/_conseils.scss — Ma page de conseils filtrables
+// ==========================================================================
+// Pour la page conseils, mon objectif était d'avoir une recherche simple et
+// des messages d'état clairs (aide, compteur, "0 résultat"). Ce fichier était
+// vide au départ et causait un bug visuel : je centralise ici les petits
+// textes d'aide sous la barre de recherche pour rester cohérent avec ma charte.
+// ==========================================================================
+
+// Le message d'aide sous la barre de recherche (ex: "Tape au moins 3 lettres")
+.conseil-search-help {
+    text-align: center;
+    font-family: $font-body;
+    font-size: 0.9rem;
+    color: $clr-gold;
+    margin-top: 10px;
+    // min-height évite le saut de layout quand le texte apparaît/disparaît
+    min-height: 1.2em;
+}
+
+// Le texte compteur "3 fiches trouvées" — je le centre et l'adoucis
+.advice-search-help {
+    text-align: center;
+    font-family: $font-body;
+    color: rgba(255,255,255,0.8);
+    padding: 20px;
+}
+
+// Message "aucun résultat" — je le mets en italique pour bien le distinguer
+.advice-no-results {
+    text-align: center;
+    color: rgba(255,255,255,0.9);
+    padding: 20px;
+    font-style: italic;
+}

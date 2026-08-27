@@ -1,0 +1,42 @@
+// ==========================================================================
+// FICHIER : style.scss — Mon point d'entrée SASS central (architecture 7-1)
+// ==========================================================================
+// Pour compiler mon SCSS, mon objectif était d'avoir un seul fichier d'entrée
+// clair qui importe tout dans le bon ordre. J'applique l'architecture 7-1
+// simplifiée : 1) abstracts (variables, mixins) d'abord car tout en dépend,
+// 2) base (reset, typographie), 3) layout (grid, header, sidebar, footer),
+// 4) components (boutons, recherche, cartes, modales, toast, loader),
+// 5) pages (accueil, encyclopédie, contenu, collection, conseils, auth, admin).
+// L'ordre est crucial : si j'importe les pages avant les variables, ça casse.
+// ==========================================================================
+
+// 1. Configuration — mes tokens et fonctions d'abord (aucun CSS généré ici)
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+
+// 2. Styles de base — mon Reset et ma typographie globale
+@import 'base/reset';
+@import 'base/typography';
+
+// 3. Éléments de structure (Layout) — mon squelette réutilisable
+@import 'layout/grid';
+@import 'layout/header';
+@import 'layout/sidebar';
+@import 'layout/footer';
+
+// 4. Composants réutilisables — mes briques UI avec Glassmorphism
+@import 'components/buttons';
+@import 'components/search';
+@import 'components/cards';
+@import 'components/modals';
+@import 'components/toast';
+@import 'components/loader';
+
+// 5. Pages spécifiques — mes surcharges par page
+@import 'pages/accueil';
+@import 'pages/encyclopedie';
+@import 'pages/content';
+@import 'pages/collection';
+@import 'pages/conseils';
+@import 'pages/authentification';
+@import 'pages/admin';
