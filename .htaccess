@@ -6,11 +6,11 @@ Options -Indexes
     Require all denied
 </FilesMatch>
 
-# 3. Protection des fichiers sensibles par extension
-<FilesMatch "\.(env|sql|md|json)$">
+# 3. Protection des fichiers système sensibles uniquement (env, sql, markdown, logs)
+<FilesMatch "\.(env|sql|md|log|ini)$">
     Require all denied
 </FilesMatch>
 
-# 4. Protection du dossier des migrations SQL (remplace la directive <Directory>)
+# 4. Protection du dossier des migrations SQL
 RewriteEngine On
 RewriteRule ^api/migration/ - [F,L]
