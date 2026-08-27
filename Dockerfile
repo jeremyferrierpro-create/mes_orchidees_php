@@ -1,15 +1,20 @@
 FROM php:8.2-apache
 
-# 1. Activation du module de réécriture d'URL
+# 1. Installation des dépendances système pour PostgreSQL
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Activation du module de réécriture d'URL Apache
 RUN a2enmod rewrite
 
-# 2. Installation des extensions PHP courantes
-RUN docker-php-ext-install pdo pdo_mysql
+# 3. Installation des extensions PHP (MySQL + PostgreSQL)
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pgsql
 
-# 3. Copie des fichiers du projet dans le serveur Apache
+# 4. Copie des fichiers du projet
 COPY . /var/www/html/
 
-# 4. Permissions pour le serveur web
+# 5. Permissions
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
