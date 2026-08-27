@@ -1,15 +1,16 @@
-# Désactiver le listage des répertoires
+# 1. Désactiver le listage des répertoires
 Options -Indexes
 
-# Protection des fichiers sensibles
+# 2. Protection des fichiers cachés (.git, .env, etc.)
 <FilesMatch "^\.">
     Require all denied
 </FilesMatch>
+
+# 3. Protection des fichiers sensibles par extension
 <FilesMatch "\.(env|sql|md|json)$">
     Require all denied
 </FilesMatch>
 
-# Bloquer l'accès au dossier /api/migration/
+# 4. Protection du dossier des migrations SQL (remplace la directive <Directory>)
 RewriteEngine On
-
-RewriteRule ^api/migration(?:/|$) - [F,L]
+RewriteRule ^api/migration/ - [F,L]
