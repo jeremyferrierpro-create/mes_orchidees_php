@@ -1,0 +1,93 @@
+// ==========================================================================
+// FICHIER : components/_buttons.scss — Mes boutons réutilisables
+// ==========================================================================
+// Pour les boutons, mon objectif était d'avoir un langage commun sur tout le
+// site : hamburger animé, pilule dorée de recherche et boutons génériques.
+// J'utilise Flexbox pour centrer, border-radius 50px pour la forme pilule et
+// des transitions douces pour le feedback.
+// ==========================================================================
+
+// Le bouton Hamburger du Header — j'anime 3 barres en CSS pur
+.menu-toggle {
+    background: transparent;
+    border: none;
+    padding: 10px;
+    // Flexbox centrée : je centre la barre au milieu du bouton
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    // La barre centrale du hamburger
+    .hamburger-bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background-color: $clr-gold;
+        position: relative;
+        transition: background-color 0.3s ease;
+
+        // Les barres du haut et du bas créées en pseudo-éléments
+        &::before,
+        &::after {
+            content: "";
+            display: block;
+            width: 25px;
+            height: 3px;
+            background-color: $clr-gold;
+            position: absolute;
+            transition: transform 0.3s ease;
+        }
+
+        &::before { top: -8px; }
+        &::after { top: 8px; }
+    }
+}
+
+// Le bouton de validation de la recherche (loupe / texte)
+.search-btn {
+    background-color: $clr-gold;
+    // Je mets du vert très sombre sur doré pour respecter le contraste RGAA 4.5:1
+    color: $clr-bg;
+    border: none;
+    padding: 10px 25px;
+    // border-radius 50px : je veux la forme "pilule" signature de mon UI
+    border-radius: 50px;
+    font-family: $font-titles;
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+// Bouton générique — je l'utilise pour connexion, déconnexion, validation
+.btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 50px;
+    font-family: $font-titles;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    text-align: center;
+
+    &:hover:not(:disabled) {
+        opacity: 0.9;
+        // Je grossis légèrement au survol pour le feedback sans saut brusque
+        transform: scale(1.02);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.btn-primary {
+    background-color: $clr-gold;
+    color: $clr-bg;
+}

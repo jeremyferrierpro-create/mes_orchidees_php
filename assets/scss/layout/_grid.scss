@@ -1,0 +1,267 @@
+// ==========================================================================
+// FICHIER : layout/_grid.scss — Système de layout responsive avec CSS Grid
+// ==========================================================================
+// Implémentation du système de grid layout avec CSS variables pour un
+// responsive automatique et sans chevauchement du header/footer/sidebar
+// ==========================================================================
+
+// =============================================================================
+// CSS VARIABLES EXPORTÉES (utilisables en JavaScript et CSS natif)
+// =============================================================================
+:root {
+    --header-height: #{$header-height};
+    --footer-height: #{$footer-height};
+    --sidebar-width: #{$sidebar-width};
+    --spacing-unit: #{$spacing-unit};
+    
+    --breakpoint-mobile: #{$breakpoint-mobile};
+    --breakpoint-tablet: #{$breakpoint-tablet};
+    --breakpoint-desktop: #{$breakpoint-desktop};
+    --breakpoint-large: #{$breakpoint-large};
+}
+
+// =============================================================================
+// LAYOUT PRINCIPAL AVEC CSS GRID
+// =============================================================================
+body {
+    display: grid;
+    grid-template-areas: 
+        "header header"
+        "sidebar main"
+        "footer footer";
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-rows: var(--header-height) 1fr var(--footer-height);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    
+    @include respond-to('lg') {
+        // Sur tablette/desktop : sidebar off-canvas
+        grid-template-areas: 
+            "header"
+            "main"
+            "footer";
+        grid-template-columns: 1fr;
+    }
+}
+
+// =============================================================================
+// HEADER
+// =============================================================================
+#main-header {
+    grid-area: header;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: var(--header-height);
+    margin: 0;
+    padding: 0 var(--spacing-unit);
+    
+    @include respond-to('md') {
+        --header-height: 60px;
+    }
+    
+    @include respond-to('xs') {
+        --header-height: 50px;
+    }
+}
+
+// =============================================================================
+// SIDEBAR
+// =============================================================================
+#main-sidebar {
+    grid-area: sidebar;
+    position: sticky;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    overflow-y: auto;
+    z-index: 90;
+    
+    @include respond-to('lg') {
+        position: fixed;
+        right: 0;
+        top: var(--header-height);
+        width: var(--sidebar-width);
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+    }
+    
+    #main-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+    
+    @include respond-to('md') {
+        --sidebar-width: 85vw;
+    }
+}
+
+// =============================================================================
+// MAIN CONTENT
+// =============================================================================
+.main-content {
+    grid-area: main;
+    min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    overflow-y: auto;
+    padding: var(--spacing-unit);
+    word-break: break-word;
+    overflow-wrap: break-word;
+    
+    @include respond-to('md') {
+        padding: calc(var(--spacing-unit) * 0.75);
+    }
+}
+
+// =============================================================================
+// FOOTER
+// =============================================================================
+#main-footer {
+    grid-area: footer;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    height: var(--footer-height);
+    margin: 0;
+    padding: 0 var(--spacing-unit);
+    
+    @include respond-to('md') {
+        --footer-height: 60px;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    @include respond-to('xs') {
+        --footer-height: 80px;
+    }
+}
+
+// =============================================================================
+// TYPOGRAPHY RESPONSIVE
+// =============================================================================
+h1, h2, h3, h4, h5, h6 {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+h1 {
+    font-size: clamp(1.5rem, 5vw, 4rem);
+}
+
+h2 {
+    font-size: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+h3 {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+}
+
+p, span, div {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+// =============================================================================
+// IMAGES RESPONSIVE UNIVERSEL
+// =============================================================================
+img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+// =============================================================================
+// CONTAINERS FLUIDES
+// =============================================================================
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 3rem);
+    box-sizing: border-box;
+}
+
+// =============================================================================
+// GRID RESPONSIVE AUTOMATIQUE
+// =============================================================================
+.grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: clamp(1rem, 2vw, 2rem);
+    
+    @include respond-to('sm') {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+        gap: 10px;
+    }
+    
+    @include respond-to('micro') {
+        grid-template-columns: 1fr;
+    }
+}
+
+// =============================================================================
+// CONTENEUR FLUIDE GÉNÉRIQUE (legacy)
+// =============================================================================
+.container-fluid {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(15px, 4vw, 40px);
+    box-sizing: border-box;
+
+    @include respond-to('md') {
+        max-width: 100%;
+        padding: 0 20px;
+    }
+    
+    @include respond-to('xs') {
+        padding: 0 10px;
+    }
+}
+
+// =============================================================================
+// GRILLE AUTOMATIQUE (legacy)
+// =============================================================================
+.grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+
+    @include respond-to('sm') {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+// =============================================================================
+// FLEXBOX EMPILABLE (legacy)
+// =============================================================================
+.stack-on-mobile {
+    display: flex;
+    flex-wrap: wrap;
+    
+    @include respond-to('md') {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+}
+
+// =============================================================================
+// TABLEAUX RESPONSIVES (legacy)
+// =============================================================================
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    
+    background: linear-gradient(to right, rgba(14, 32, 24, 1) 30%, rgba(255, 255, 255, 0)),
+                linear-gradient(to right, rgba(255, 255, 255, 0), rgba(14, 32, 24, 1) 70%) 0 100%,
+                radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),
+                radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)) 0 100%;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-position: 0 0, 100%, 0 0, 100%;
+    background-attachment: local, local, scroll, scroll;
+}

@@ -1,0 +1,63 @@
+// MES MIXINS (MES FONCTIONS COMPOSANTS REUTILISABLES)
+
+// Mon effet effet verre givré (Glassmorphism)
+@mixin glass-effect {
+    background-color: rgba(14, 32, 24, 0.5); // Fond vert transparent
+    backdrop-filter: blur(20px);              // Le flou de l'image derrière
+    -webkit-backdrop-filter: blur(20px);      // Securité pour Safari
+
+    // Mes bordures et reflets style cristal
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25); // Le petit trait brillant en haut
+}
+
+// Classe universelle pour masquer visuellement un élément tout en préservant l'accessibilité
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+// Lien d'accès rapide clavier (accessibilité WCAG / RGAA)
+.skip-link {
+    position: absolute;
+    top: -100px; // S'assure qu'il est complètement en dehors de l'écran
+    left: 0;
+    z-index: 1000;
+    padding: 10px 20px;
+    background-color: $clr-gold;
+    color: $clr-bg;
+    font-family: $font-titles;
+    text-decoration: none;
+    transition: top 0.2s ease;
+
+    &:focus {
+        top: 0;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// RESPONSIVE MIXIN (Appelle les paliers de _variables.scss)
+// Utilisation : @include respond-to('md') { ... }
+// -----------------------------------------------------------------------------
+@mixin respond-to($breakpoint) {
+    // Si la clé existe dans la map $breakpoints
+    @if map-has-key($breakpoints, $breakpoint) {
+        // Crée la media query max-width
+        @media (max-width: map-get($breakpoints, $breakpoint)) {
+            @content;
+        }
+    }
+    // Affiche une erreur si le point d'arrêt n'existe pas
+    @else {
+        @warn "Le point d'arrêt `#{$breakpoint}` n'existe pas dans la variable $breakpoints.";
+    }
+}

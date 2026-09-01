@@ -1,0 +1,91 @@
+// ==========================================================================
+// FICHIER : pages/_encyclopedie.scss — Ma grille d'encyclopédie filtrée
+// ==========================================================================
+// Pour l'encyclopédie, mon objectif était d'afficher des centaines de fiches
+// sans jamais casser le layout sur mobile. J'utilise Grid auto-fit avec
+// minmax() + clamp() pour des colonnes automatiques, Flexbox pour l'en-tête
+// et overflow-y: auto pour un scroll interne propre.
+// ==========================================================================
+
+.encyclopedia-header {
+    // Flexbox colonne centrée : titre au-dessus, intro en dessous, tout centré
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+    .page-title {
+        font-family: $font-titles;
+        // clamp() : le titre passe de 28px (mobile) à 42px (desktop) fluide
+        font-size: clamp(28px, 5vw, 42px);
+        color: $clr-gold;
+        letter-spacing: 4px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .page-intro {
+        font-family: $font-body;
+        font-size: 16px;
+        color: $clr-white;
+        opacity: 0.9;
+        text-align: center;
+    }
+}
+
+// CONTENEUR DE LA GRILLE — c'est lui qui scrolle, pas la page entière
+.encyclopedia-grid-container {
+    width: 100%;
+    max-width: 1200px;
+    flex: 1;
+    // overflow-y: auto : je crée un ascenseur interne pour ne pas pousser le footer
+    overflow-y: auto;
+    padding: 15px 5px;
+    margin-bottom: 90px;
+    box-sizing: border-box;
+    border-radius: 10px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(196, 164, 124, 0.3);
+        border-radius: 10px;
+    }
+}
+
+// GRILLE RESPONSIVE DE CARTES — le cœur de la page
+.orchid-grid {
+    display: grid;
+    // Grid auto-fit magique : je crée automatiquement 5 colonnes sur PC, 3 sur tablette, 2 sur mobile
+    // min(100%, 210px) évite le débordement sur écran <210px
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    // gap en clamp() : de 15px à 25px fluide
+    gap: clamp(15px, 2.5vw, 25px);
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    
+    @include respond-to('xs') {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+        gap: 10px;
+    }
+    
+    @include respond-to('micro') {
+        // Sur très petit écran je force 1 colonne pour rester lisible
+        grid-template-columns: 1fr;
+    }
+}
+
+// Message affiché quand aucun résultat ne correspond à la recherche
+.no-results {
+    font-family: $font-body;
+    font-size: 1.2rem;
+    color: $clr-white;
+    padding: 40px 0;
+    text-align: center;
+}

@@ -1,0 +1,406 @@
+// ==========================================================================
+// FICHIER : pages/_admin.scss — Mon panneau d'administration complet
+// ==========================================================================
+// Pour l'admin, mon objectif était de rester fidèle au mockup : 3 cartes de
+// stats en haut, 2 tableaux en pilules grises au centre, et 3 gros boutons
+// d'action. J'utilise Flexbox pour les cartes, Grid 1fr 1fr pour les 4 chiffres
+// internes et overflow-x: auto pour que les tableaux restent scrollables sur
+// mobile sans casser la page.
+// ==========================================================================
+
+// Le gros titre ADMINISTRATION
+.admin-header {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    .page-title {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+        letter-spacing: 4px;
+    }
+}
+
+// Les 3 cartes du haut (UTILISATEURS / PLANTES / ACTIVITES)
+.admin-dashboard-section {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+}
+
+.admin-dash-cards {
+    // Flexbox ligne centrée : je mets les 3 cartes côte à côte comme sur le mockup
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    @include respond-to('md') {
+        // Sur tablette/mobile je laisse le retour à la ligne
+        flex-wrap: wrap;
+    }
+}
+
+.admin-dash-card {
+    background: transparent;
+    border: none;
+    text-align: center;
+    // flex: 1 : chaque carte prend la même largeur disponible
+    flex: 1;
+    min-width: 280px;
+    max-width: 360px;
+    h3 {
+        font-family: $font-titles;
+        color: $clr-gold;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+}
+
+// La petite grille de 4 chiffres à l'intérieur de chaque carte
+.admin-dash-grid {
+    // Grid 2 colonnes : 2 chiffres en haut, 2 en bas — exactement comme le mockup
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: #1a2e24;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+
+    .dash-stat {
+        background: #2a3d34;
+        padding: 15px 10px;
+        // Flexbox colonne centrée : label au-dessus, chiffre en dessous
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        span {
+            font-family: $font-body;
+            font-size: 0.7rem;
+            color: $clr-gold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        strong {
+            font-family: $font-titles;
+            font-size: 1.6rem;
+            color: $clr-white;
+            font-weight: 600;
+        }
+    }
+}
+
+// Titres des sections (GESTION DE L'ENCYCLOPEDIE / NOTIFICATIONS)
+.admin-section-title {
+    font-family: $font-titles;
+    color: $clr-gold;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+// Les 2 gros tableaux (encyclopédie et notifications)
+.admin-encyclopedia-section, .admin-notifications-container {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    background: #0f281e;
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.admin-table-container {
+    width: 100%;
+    // overflow-x: auto : je permets le scroll horizontal interne sans déborder la page
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-table-header {
+    // Flexbox ligne : je répartis les colonnes
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    font-family: $font-titles;
+    font-size: 0.75rem;
+    color: $clr-gold;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    margin-bottom: 10px;
+    min-width: 600px;
+
+    div {
+        flex: 1;
+        text-align: left;
+    }
+    .col-actions {
+        flex: 0 0 100px;
+        text-align: right;
+    }
+}
+
+.admin-table-body {
+    max-height: 320px;
+    // overflow-y: auto : je limite la hauteur et je scrolle à l'intérieur
+    overflow-y: auto;
+    padding-right: 5px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: rgba(14, 32, 24, 0.2); 
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(212, 175, 55, 0.5); 
+        border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgba(212, 175, 55, 0.8); 
+    }
+}
+
+// Une ligne du tableau = pilule grise arrondie comme sur le mockup
+.admin-table-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    margin-bottom: 8px;
+    background: #2a3d34;
+    border-radius: 20px;
+    transition: background 0.3s ease;
+    min-width: 600px;
+
+    &:hover {
+        background: #334a40;
+    }
+
+    div {
+        flex: 1;
+        font-family: $font-body;
+        font-size: 0.85rem;
+        color: #d4c5a8;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 10px;
+    }
+
+    .col-actions {
+        flex: 0 0 100px;
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+
+        button {
+            background: none;
+            border: none;
+            color: #d4c5a8;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: $clr-gold;
+            }
+        }
+    }
+}
+
+// En bas : à gauche les 3 gros boutons, à droite les notifications
+.admin-bottom-section {
+    max-width: 1200px;
+    margin: 0 auto 110px;
+    display: flex;
+    gap: 40px;
+
+    @include respond-to('md') {
+        // Sur tablette je passe en colonne : tout s'empile
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .admin-big-actions {
+        flex: 0 0 350px;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .admin-notifications-container {
+        flex: 1;
+        width: 100%;
+        margin: 0;
+    }
+}
+
+// Les gros boutons carrés du bas
+.admin-big-btn {
+    width: 100%;
+    height: 140px;
+    border: none;
+    border-radius: 4px;
+    font-family: $font-titles;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $clr-white;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+    line-height: 1.4;
+    // Flexbox centrée : icône + texte côte à côte
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+        transform: translateY(-3px);
+        filter: brightness(1.1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    &.btn-tan {
+        background-color: #c4a47c;
+        color: #0e2018;
+        border: none;
+    }
+
+    &.btn-green {
+        background-color: #1e7a4c;
+        color: $clr-white;
+        border: none;
+    }
+    
+    &.btn-outline {
+        background-color: transparent;
+        border: 2px solid $clr-gold;
+        color: $clr-gold;
+        height: 80px;
+        font-size: 0.95rem;
+        border-radius: 4px;
+        
+        &:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+    }
+    
+    i {
+        font-size: 1.8rem;
+    }
+}
+
+// Les petites fenêtres (modales) de l'admin
+.admin-form-modal {
+    // J'applique mon Mixin glass-effect : verre givré cohérent
+    @include glass-effect;
+    max-width: 600px;
+    padding: 40px;
+}
+
+.admin-modal-title {
+    font-family: $font-titles;
+    color: $clr-gold;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: 2px;
+}
+
+.admin-elegant-form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    .form-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        label {
+            font-family: $font-titles;
+            color: $clr-white;
+            font-size: 1.1rem;
+            min-width: 80px;
+            text-transform: uppercase;
+        }
+
+        @include respond-to('xs') {
+            // Sur petit écran je passe le label au-dessus de l'input
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        .pill-input {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: $clr-white;
+            font-family: $font-body;
+            font-size: 1rem;
+            flex: 1;
+
+            &.full-width {
+                width: 100%;
+            }
+
+            &:focus {
+                outline: none;
+                border-color: $clr-gold;
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+    }
+
+    .form-footer-dates {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-family: $font-body;
+        font-size: 0.9rem;
+        color: $clr-white;
+    }
+}
+
+.admin-modal-actions, .admin-mod-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-top: 20px;
+
+    .btn-tan {
+        background-color: $clr-gold;
+        color: $clr-bg;
+        border: none;
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-family: $font-titles;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s ease, filter 0.3s ease;
+
+        &:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        
+        &.btn-cancel {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: $clr-white;
+        }
+    }
+}

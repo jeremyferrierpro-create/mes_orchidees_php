@@ -1,0 +1,139 @@
+// ==========================================================================
+// FICHIER : base/_reset.scss — Ma remise à zéro et mon squelette global
+// ==========================================================================
+// Pour la base de mon site, mon objectif était de partir d'une page blanche
+// propre et d'éviter tous les bugs classiques (scroll horizontal, footer qui
+// flotte, image qui déborde, fond fixe qui saute sur iOS). Je pose ici mon
+// Reset et la structure Flexbox que toutes les pages réutilisent.
+// ==========================================================================
+
+// Je neutralise toutes les marges/paddings par défaut des navigateurs.
+// Pourquoi box-sizing: border-box ? Pour que padding et border ne fassent plus
+// grossir mes largeurs : 100% reste 100%, c'est indispensable pour le responsive.
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    // Je bloque tout débordement horizontal : mes mots latins animés en JS
+    // et mes grilles larges ne doivent jamais créer de barre de scroll en bas.
+    overflow-x: hidden;
+    width: 100%;
+}
+
+// -----------------------------------------------------------------------------
+// FOND GLOBAL ET STRUCTURE DE BASE — Mon gabarit Flexbox vertical
+// -----------------------------------------------------------------------------
+body {
+    background-color: #0a1711;
+    // Je veux une page qui fait au moins la hauteur de l'écran
+    min-height: 100vh;
+    // Je passe le body en Flexbox colonne : header en haut, .main-content qui
+    // grandit au centre, footer poussé en bas. C'est ma colonne vertébrale.
+    display: flex;
+    flex-direction: column;
+    // Je crée un contexte de position pour le pseudo-élément de fond
+    position: relative;
+    
+    // Mon fond photo de forêt : je le mets en pseudo-élément fixe car c'est
+    // la seule méthode 100% fiable sur iOS Safari. background-attachment: fixed
+    // bug sur iPhone, ici mon ::before en position: fixed ne bouge jamais.
+    &::before {
+        content: "";
+        // position: fixed + inset implicite (top/left 0 + 100vw/vh) : je couvre
+        // toute la fenêtre même au scroll, comme un voile d'arrière-plan.
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -10;
+        background-image: 
+          radial-gradient(circle at center, rgba(20, 50, 35, 0.85) 0%, rgba(10, 23, 17, 0.95) 50%), 
+          linear-gradient(rgba(10, 23, 17, 0.4), rgba(10, 23, 17, 0.4)), 
+          url("../images/site/background.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        // Je laisse les clics traverser le fond : il ne doit jamais bloquer un bouton
+        pointer-events: none;
+    }
+}
+
+// Mon conteneur principal commun à TOUTES les pages
+.main-content {
+    // flex-grow: 1 : je dis à Flexbox "prends tout l'espace restant" pour pousser le footer en bas
+    flex-grow: 1;
+    // Je calcule la hauteur minimale en retirant header+footer (~180px) pour éviter le vide
+    min-height: calc(100vh - 180px);
+    // Je reste en Flexbox colonne : j'empile mes sections depuis le haut
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    position: relative;
+    // Je réserve 90px en bas : mon footer est en position: fixed, sans ce padding mon contenu passerait dessous
+    padding-bottom: 90px;
+    box-sizing: border-box;
+}
+
+// Je nettoie les liens : je retire le soulignement bleu par défaut et j'hérite
+// de la couleur du parent pour rester dans ma charte doré/blanc
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+// Je retire les puces des listes : mes menus sont des <ul> mais je veux un design épuré
+ul, li {
+    list-style: none;
+}
+
+img {
+    // Je bloque les images à 100% de leur conteneur : elles ne débordent jamais sur mobile
+    max-width: 100%;
+    height: auto;
+    // display: block supprime l'espace blanc fantôme sous les images (baseline inline)
+    display: block;
+}
+
+button {
+    // Je mets la main au survol partout : l'utilisateur comprend immédiatement que c'est cliquable
+    cursor: pointer;
+}
+
+// Accessibilité RGAA : je rends le focus clavier ultra visible avec mon doré
+// Pourquoi outline 3px ? Pour valider le critère 7.1 et aider la navigation au Tab
+*:focus-visible {
+    outline: 3px solid #c4a47c !important;
+    outline-offset: 3px !important;
+    border-radius: 4px;
+}
+
+// RGAA : je respecte les utilisateurs sensibles aux animations
+// Si l'OS demande prefers-reduced-motion, je coupe toutes mes transitions/animations
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Classe utilitaire .sr-only : je cache visuellement mais je laisse lisible
+// par les lecteurs d'écran (NVDA, VoiceOver). Indispensable pour le RGAA.
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}

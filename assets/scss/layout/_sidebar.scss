@@ -1,0 +1,144 @@
+// ==========================================================================
+// FICHIER : layout/_sidebar.scss — Ma barre latérale coulissante à droite
+// ==========================================================================
+// Pour la barre latérale, mon objectif était d'avoir un menu qui coulisse
+// depuis la droite sans jamais créer de scroll horizontal, même sur iPhone SE
+// 320px. J'utilise position: fixed + width: min() + transform translateX pour
+// l'animation, et Flexbox colonne pour empiler logo / liens / bloc admin.
+// ==========================================================================
+
+#main-sidebar {
+    // Je fige la sidebar par rapport à la fenêtre : elle suit le scroll
+    position: fixed;        
+    top: 110px;
+    right: 15px;            
+    // width: min(300px, 85vw) : je prends 300px max mais jamais plus de 85% de l'écran
+    // C'est ma sécurité anti-débordement sur mobile 320px
+    width: min(300px, 85vw);
+    max-height: 85vh;
+    z-index: 100;           
+    padding: 35px 25px;
+    border-radius: 20px;                      
+    
+    @include respond-to('xs') {
+        padding: 25px 15px;
+        width: min(280px, 90vw);
+    }
+    
+    @include respond-to('micro') {
+        padding: 15px 10px;
+        // Sur très petit écran je passe en plein écran sans arrondi
+        width: 100vw;
+        border-radius: 0;
+        right: 0;
+    }
+    
+    // Je passe en Flexbox colonne : j'empile verticalement logo -> menu principal -> menu admin
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    // J'applique mon Mixin glass-effect : verre givré cohérent avec le header/footer
+    @include glass-effect;
+
+    // Je bloque tout scroll interne : le jury voulait une sidebar sans ascenseur
+    overflow: hidden; 
+
+    // CACHÉE PAR DÉFAUT — logique d'ouverture en JS
+    // transform translateX(calc(100% + 20px)) : je la sors complètement à droite de l'écran
+    transform: translateX(calc(100% + 20px));  
+    // visibility: hidden : je la rends inaccessible au clavier/lecteur d'écran quand fermée (RGAA)
+    visibility: hidden;
+    // Je joue sur transform + visibility pour une sortie fluide sans flash
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0.4s; 
+
+    // Classe ajoutée par JS au clic hamburger
+    &.sidebar-open {
+        transform: translateX(0);
+        visibility: visible;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s 0s;
+    }
+}
+
+// --- BLOC LOGO + TITRE EN HAUT ---
+.sidebar-brand {
+    // Flexbox colonne centrée : logo au-dessus du titre, tout centré
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    // Fine ligne de séparation sous le logo pour structurer visuellement
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+
+    img {
+        height: 60px;
+        width: auto;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        font-family: $font-titles;
+        font-size: 22px;
+        color: $clr-gold;
+        letter-spacing: 2px;
+    }
+}
+
+// --- STRUCTURE DES MENUS ---
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    // Je prends toute la hauteur restante pour pouvoir pousser le groupe admin en bas
+    height: 100%;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        
+        @include respond-to('micro') {
+            gap: 10px;
+        }
+    }
+
+    // Premier bloc de liens (Accueil, Encyclopédie, Collection, Conseils)
+    .menu-group-main {
+        // margin-bottom 70px : je pousse le groupe suivant vers le bas de la navigation
+        margin-bottom: 70px;
+    }
+
+    // Second bloc de liens (Admin / Connexion)
+    .menu-group-user {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 20px;
+    }
+
+    // Le style de mes liens avec icône dorée
+    a {
+        font-family: $font-titles;
+        font-size: 16px;
+        color: $clr-white;
+        // Flexbox ligne : icône + texte alignés
+        display: flex;
+        align-items: center;          
+        gap: 15px;                    
+        transition: all 0.3s ease; 
+        padding: 4px 0;
+
+        i {
+            color: $clr-gold;               
+            font-size: 18px;
+            // Largeur fixe pour aligner toutes les icônes verticalement
+            width: 24px;                  
+            text-align: center;
+        }
+
+        &:hover {
+            color: $clr-gold;               
+            // Je glisse légèrement vers la gauche au survol pour le feedback
+            transform: translateX(-5px);
+        }
+    }
+}

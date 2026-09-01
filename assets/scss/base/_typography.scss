@@ -1,0 +1,48 @@
+// ==========================================================================
+// FICHIER : base/_typography.scss — Ma hiérarchie typographique globale
+// ==========================================================================
+// Pour la typographie, mon objectif était d'installer une identité botanique
+// élégante mais ultra lisible. J'ai choisi deux polices seulement : Cinzel
+// (serif prestige) pour les titres et Inter (sans-serif) pour le corps.
+// Je centralise ici toutes les tailles par défaut pour garantir la cohérence.
+// ==========================================================================
+
+body {
+    // J'applique Inter partout par défaut : c'est ma police corps la plus lisible même à 13px sur mobile
+    font-family: $font-body;
+    color: $clr-white;
+    // Je lisse les crans sur Mac/iOS pour un rendu plus propre et haut de gamme
+    -webkit-font-smoothing: antialiased;
+}
+
+// Je gère mes titres avec ma police d'exception Cinzel
+h1 {
+    // J'utilise $font-titles (Cinzel) : elle donne le côté "ouvrage de botanique prestigieux"
+    font-family: $font-titles;
+    // 65px en desktop : je veux un impact fort sur l'accueil
+    font-size: 65px;
+    color: $clr-gold;
+    text-align: center;
+}
+
+h2 {
+    font-family: $font-titles;
+    // 20px : plus discret que le H1, je m'en sers pour les sous-titres de section
+    font-size: 20px;
+    color: $clr-gold;
+    text-align: center;
+}
+
+h3 {
+    font-family: $font-titles;
+    font-size: 24px;
+    color: $clr-gold;
+}
+
+// Mes paragraphes de texte courant
+p {
+    font-family: $font-body;
+    font-size: 16px;
+    // line-height 1.6 : je donne de l'air entre les lignes pour le confort de lecture (RGAA)
+    line-height: 1.6;
+}

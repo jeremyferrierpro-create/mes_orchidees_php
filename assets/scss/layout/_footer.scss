@@ -1,0 +1,104 @@
+// ==========================================================================
+// FICHIER : layout/_footer.scss — Ma barre d'app fixe en bas de page
+// ==========================================================================
+// Pour le footer, mon objectif était de créer une barre d'app toujours visible
+// en bas, comme sur mobile natif. J'utilise position: fixed + Flexbox
+// space-between pour répartir liens gauche / logo centre / liens droite, et
+// mon Mixin glass-effect pour rester cohérent avec le header.
+// ==========================================================================
+
+#main-footer {
+    margin: 15px;
+    padding: 15px 30px;
+    
+    // Flexbox ligne : je pousse les éléments aux trois extrémités (gauche, centre, droite)
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    
+    // Je fige le footer en bas : il reste collé même au scroll
+    position: fixed;                          
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 110;
+    border-radius: 12px;                      
+
+    // J'applique mon Mixin glass-effect : même verre givré que header/sidebar
+    @include glass-effect;
+
+    @include respond-to('xs') {
+        margin: 10px;
+        padding: 12px 20px;
+    }
+    
+    @include respond-to('sm') {
+        // Sur petit écran je passe en colonne : liens empilés, centre en dessous
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    @include respond-to('micro') {
+        margin: 5px;
+        padding: 10px;
+    }
+
+    // --- MON BLOC CENTRAL (LOGO + COPYRIGHT) ---
+    .footer-center {
+        // Flexbox colonne : logo au-dessus du texte, tout centré
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+
+        img {
+            height: 30px;
+            width: auto;
+        }
+
+        p {
+            font-family: $font-body;
+            font-size: 13px;
+            color: $clr-white;
+            opacity: 0.9;
+            text-align: center;
+            // Je laisse le texte revenir à la ligne si besoin sur mobile
+            white-space: normal;
+            
+            @include respond-to('xs') {
+                font-size: 11px;
+            }
+        }
+    }
+
+    // --- MES LIENS DES EXTRÉMITÉS (GAUCHE ET DROITE) ---
+    .footer-links-group {
+        display: flex;
+        gap: 20px;
+        @include respond-to('sm') {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+
+    .footer-link {
+        font-family: $font-body;
+        font-size: 14px;
+        color: $clr-gold;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        transition: opacity 0.3s ease, text-decoration-color 0.3s ease;
+
+        &:hover, &:focus-visible {
+            opacity: 0.8;
+            text-decoration-color: transparent;
+        }
+        
+        @include respond-to('xs') {
+            font-size: 12px;
+            text-align: center;
+        }
+    }
+}
