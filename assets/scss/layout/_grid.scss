@@ -134,6 +134,29 @@ body {
     }
 }
 
+// =============================================================================
+// CENTRAGE DESKRIPT (uniquement sur desktop > 1024px)
+// =============================================================================
+@media (min-width: 1025px) {
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-unit) calc(var(--spacing-unit) * 2);
+    }
+    
+    #main-header {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 calc(var(--spacing-unit) * 2);
+    }
+    
+    #main-footer {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 calc(var(--spacing-unit) * 2);
+    }
+}
+
 
 // =============================================================================
 // TYPOGRAPHY RESPONSIVE
