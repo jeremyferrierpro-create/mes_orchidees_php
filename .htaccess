@@ -9,10 +9,9 @@ Options -Indexes
     Require all denied
 </FilesMatch>
 
-# Protection spécifique du dossier des migrations SQL
-<Directory "api/migration">
-    Require all denied
-</Directory>
+# Protection spécifique du dossier api/migration
+RewriteEngine On
+RewriteRule ^api/migration(/.*)?$ - [F,L]
 
 # MIME type pour les modules JavaScript ES6
 <FilesMatch "\.js$">
