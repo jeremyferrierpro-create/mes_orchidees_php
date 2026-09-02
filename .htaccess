@@ -13,3 +13,8 @@ Options -Indexes
 <Directory "api/migration">
     Require all denied
 </Directory>
+
+# MIME type pour les modules JavaScript ES6
+<FilesMatch "\.js$">
+    ForceType text/javascript
+</FilesMatch>

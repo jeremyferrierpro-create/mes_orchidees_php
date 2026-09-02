@@ -38,8 +38,13 @@
             transition: transform 0.3s ease;
         }
 
-        &::before { top: -8px; }
-        &::after { top: 8px; }
+        &::before {
+            top: -8px;
+        }
+
+        &::after {
+            top: 8px;
+        }
     }
 }
 

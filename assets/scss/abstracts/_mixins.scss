@@ -3,8 +3,8 @@
 // Mon effet effet verre givré (Glassmorphism)
 @mixin glass-effect {
     background-color: rgba(14, 32, 24, 0.5); // Fond vert transparent
-    backdrop-filter: blur(20px);              // Le flou de l'image derrière
-    -webkit-backdrop-filter: blur(20px);      // Securité pour Safari
+    backdrop-filter: blur(20px); // Le flou de l'image derrière
+    -webkit-backdrop-filter: blur(20px); // Securité pour Safari
 
     // Mes bordures et reflets style cristal
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -49,13 +49,16 @@
 // Utilisation : @include respond-to('md') { ... }
 // -----------------------------------------------------------------------------
 @mixin respond-to($breakpoint) {
+
     // Si la clé existe dans la map $breakpoints
     @if map-has-key($breakpoints, $breakpoint) {
+
         // Crée la media query max-width
         @media (max-width: map-get($breakpoints, $breakpoint)) {
             @content;
         }
     }
+
     // Affiche une erreur si le point d'arrêt n'existe pas
     @else {
         @warn "Le point d'arrêt `#{$breakpoint}` n'existe pas dans la variable $breakpoints.";

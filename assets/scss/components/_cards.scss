@@ -22,24 +22,24 @@
   justify-content: space-between;
   border-radius: 12px;
   transition: transform 0.3s ease, border-color 0.3s ease;
-  
+
   @include respond-to('xs') {
-      min-height: 250px;
-      padding: 12px !important;
+    min-height: 250px;
+    padding: 12px !important;
   }
-  
+
   @include respond-to('micro') {
-      min-height: auto;
-      max-width: 100%;
+    min-height: auto;
+    max-width: 100%;
   }
 
   // J'applique mon Mixin glass-effect : toutes mes cartes ont le même verre dépoli
   @include glass-effect;
 
   &:hover {
-      // Je soulève la carte de 5px au survol pour l'effet interactif
-      transform: translateY(-5px);
-      border-color: $clr-gold;
+    // Je soulève la carte de 5px au survol pour l'effet interactif
+    transform: translateY(-5px);
+    border-color: $clr-gold;
   }
 
   .card-img {
@@ -60,13 +60,13 @@
       color: $clr-gold;
       font-family: $font-titles;
     }
-    
+
     .vernacular-name {
-        font-family: $font-body;
-        font-size: 9px;
-        opacity: 0.8;
-        margin: 0;
-        text-transform: uppercase;
+      font-family: $font-body;
+      font-size: 9px;
+      opacity: 0.8;
+      margin: 0;
+      text-transform: uppercase;
     }
 
     .short-desc {
@@ -83,21 +83,21 @@
     }
 
     .card-btn {
-        background-color: #c4a47c;
-        color: #0e2018;
-        border: none;
-        padding: 5px 18px;
-        border-radius: 20px;
-        font-family: $font-titles;
-        font-size: 9px;
-        font-weight: bold;
-        cursor: pointer;
-        letter-spacing: 0.5px;
-        transition: opacity 0.2s;
+      background-color: #c4a47c;
+      color: #0e2018;
+      border: none;
+      padding: 5px 18px;
+      border-radius: 20px;
+      font-family: $font-titles;
+      font-size: 9px;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s;
 
-        &:hover {
-            opacity: 0.9;
-        }
+      &:hover {
+        opacity: 0.9;
+      }
     }
   }
 }

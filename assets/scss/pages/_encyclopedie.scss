@@ -69,12 +69,12 @@
     justify-content: center;
     width: 100%;
     box-sizing: border-box;
-    
+
     @include respond-to('xs') {
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
         gap: 10px;
     }
-    
+
     @include respond-to('micro') {
         // Sur très petit écran je force 1 colonne pour rester lisible
         grid-template-columns: 1fr;

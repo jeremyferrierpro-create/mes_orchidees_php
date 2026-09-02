@@ -100,6 +100,7 @@
       font-family: "Cinzel", serif;
       font-size: 18px;
       color: #ffffff;
+
       strong {
         color: #c4a47c;
       }
@@ -107,7 +108,10 @@
 
     .user-email {
       color: #c4a47c;
-      i { margin-right: 6px; }
+
+      i {
+        margin-right: 6px;
+      }
     }
 
     .user-meta {
@@ -125,7 +129,10 @@
       display: inline-block;
       font-weight: 600;
       color: #c4a47c;
-      i { margin-right: 6px; }
+
+      i {
+        margin-right: 6px;
+      }
     }
   }
 
@@ -139,6 +146,7 @@
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
     font-style: italic;
+
     code {
       background: rgba(255, 255, 255, 0.1);
       padding: 2px 6px;

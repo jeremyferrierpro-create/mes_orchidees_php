@@ -25,16 +25,26 @@
     // C'est ma signature visuelle "verre dépoli" qui laisse entrevoir la forêt derrière
     @include glass-effect; 
 
-    // Mon logo image
+    // Je resserre les marges/paddings sur mobile pour gagner de la place utile
+    @include respond-to('xs') {
+        margin: 10px;
+        padding: 10px 15px;
+    }
+    @include respond-to('micro') {
+        margin: 5px;
+        padding: 8px 10px;
+    }
+
+    // --- MON LOGO À GAUCHE ---
     img {
-        height: 50px;       
+        height: 60px;
         width: auto;
-        
-        // Je réduis le logo via mon Mixin respond-to pour qu'il ne mange pas tout l'espace sur mobile
-        @include respond-to('sm') {
-            height: 40px;
-        }
+
         @include respond-to('xs') {
+            height: 45px;
+        }
+
+        @include respond-to('micro') {
             height: 35px;
         }
     }
@@ -64,13 +74,4 @@
         }
     }
 
-    // Je resserre les marges/paddings sur mobile pour gagner de la place utile
-    @include respond-to('xs') {
-        margin: 10px;
-        padding: 10px 15px;
-    }
-    @include respond-to('micro') {
-        margin: 5px;
-        padding: 8px 10px;
-    }
 }

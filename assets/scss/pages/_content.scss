@@ -450,7 +450,7 @@
         flex: 1 1 220px;
         min-width: 180px;
         max-width: 300px;
-        
+
         @include respond-to('xs') {
             flex: 1 1 100%;
             max-width: 100%;
@@ -1366,6 +1366,7 @@
 // RESPONSIVE POUR LES PAGES DE CONTENU
 // ------------------------------
 @media (max-width: 600px) {
+
     .advice-grid,
     .admin-grid {
         grid-template-columns: 1fr;

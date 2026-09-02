@@ -66,8 +66,6 @@ body {
 .main-content {
     // flex-grow: 1 : je dis à Flexbox "prends tout l'espace restant" pour pousser le footer en bas
     flex-grow: 1;
-    // Je calcule la hauteur minimale en retirant header+footer (~180px) pour éviter le vide
-    min-height: calc(100vh - 180px);
     // Je reste en Flexbox colonne : j'empile mes sections depuis le haut
     display: flex;
     flex-direction: column;
@@ -75,8 +73,6 @@ body {
     justify-content: flex-start;
     width: 100%;
     position: relative;
-    // Je réserve 90px en bas : mon footer est en position: fixed, sans ce padding mon contenu passerait dessous
-    padding-bottom: 90px;
     box-sizing: border-box;
 }
 

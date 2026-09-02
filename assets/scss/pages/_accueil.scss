@@ -30,18 +30,22 @@
     transform: translateY(10px);
     color: #c4a47c;
   }
+
   20% {
     opacity: 0.85;
     color: #c4a47c;
   }
+
   50% {
     opacity: 1;
     color: #dac8b2;
   }
+
   80% {
     opacity: 0.85;
     color: #c4a47c;
   }
+
   100% {
     opacity: 0;
     transform: translateY(-10px);
@@ -50,74 +54,75 @@
 }
 
 .title-group {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    
-    .main-title {
-        // Je fais varier le titre de 28px (iPhone SE) à 65px (desktop) avec clamp()
-        font-size: clamp(28px, 7vw, 65px);
-        letter-spacing: clamp(2px, 1vw, 6px);
-    }
-    .sub-title {
-        font-size: clamp(16px, 3.5vw, 24px);
-        opacity: 0.8;
-        margin-top: 1px;
-    }
+  position: relative;
+  z-index: 10;
+  text-align: center;
+
+  .main-title {
+    // Je fais varier le titre de 28px (iPhone SE) à 65px (desktop) avec clamp()
+    font-size: clamp(28px, 7vw, 65px);
+    letter-spacing: clamp(2px, 1vw, 6px);
+  }
+
+  .sub-title {
+    font-size: clamp(16px, 3.5vw, 24px);
+    opacity: 0.8;
+    margin-top: 1px;
+  }
 }
 
 .hero {
-    // Flexbox colonne centrée : j'empile titre, fleur et recherche verticalement
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 10px 15px;
-    // Je calcule la hauteur pour remplir l'écran sans scroll (header+footer retirés)
-    min-height: calc(100vh - 180px);
-    justify-content: center;
-    // clamp gap : j'évite que les éléments se touchent sur petit écran
-    gap: clamp(10px, 3vh, 30px);
-    
-    > * {
-        // flex-shrink 0 : j'empêche mes blocs de s'écraser et de se chevaucher
-        flex-shrink: 0;
-    }
+  // Flexbox colonne centrée : j'empile titre, fleur et recherche verticalement
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 10px 15px;
+  // Je calcule la hauteur pour remplir l'écran sans scroll (header+footer retirés)
+  min-height: calc(100vh - 180px);
+  justify-content: center;
+  // clamp gap : j'évite que les éléments se touchent sur petit écran
+  gap: clamp(10px, 3vh, 30px);
+
+  >* {
+    // flex-shrink 0 : j'empêche mes blocs de s'écraser et de se chevaucher
+    flex-shrink: 0;
+  }
 }
 
 .orchid-focus {
-    position: relative;
-    // clamp avec vmin : je m'adapte à la plus petite dimension (largeur ou hauteur) pour rester carré
-    width: clamp(200px, 45vmin, 380px);
-    height: clamp(200px, 45vmin, 380px);
-    margin: 10px 0;
-    z-index: 5;
+  position: relative;
+  // clamp avec vmin : je m'adapte à la plus petite dimension (largeur ou hauteur) pour rester carré
+  width: clamp(200px, 45vmin, 380px);
+  height: clamp(200px, 45vmin, 380px);
+  margin: 10px 0;
+  z-index: 5;
 
-    img {
-        width: 100%;
-        height: 100%;
-        // object-fit contain : je garde la fleur entière sans la couper
-        object-fit: contain;
-        filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.7));
-    }
+  img {
+    width: 100%;
+    height: 100%;
+    // object-fit contain : je garde la fleur entière sans la couper
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.7));
+  }
 }
 
 .search-container {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    max-width: 520px;
-    padding: 0 10px;
-    margin-top: 10px; 
-    margin-bottom: 5px;
-    
-    @include respond-to('xs') {
-        max-width: 95%;
-    }
-    
-    @include respond-to('micro') {
-        padding: 0 5px;
-    }
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 520px;
+  padding: 0 10px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+
+  @include respond-to('xs') {
+    max-width: 95%;
+  }
+
+  @include respond-to('micro') {
+    padding: 0 5px;
+  }
 }
 
 .search-box {
@@ -125,6 +130,7 @@
     font-size: clamp(13px, 2.5vw, 15px);
     padding: 10px 15px;
   }
+
   .search-btn {
     padding: 10px clamp(15px, 3vw, 25px);
     font-size: clamp(11px, 2vw, 13px);

@@ -14,44 +14,44 @@
     padding: 6px;
     border-radius: 50px; // Forme "pilule" arrondie caractéristique de mon UI
     width: 100%;
-    
+
     // 2. EFFET DE VERRE (GLASSMORPHISM)
     // J'inclus mon mixin réutilisable qui applique le flou d'arrière-plan (backdrop-filter).
-    @include glass-effect; 
-    
+    @include glass-effect;
+
     // J'ajoute un fond blanc subtil à 5% pour que le champ ressorte nettement
     // sur le fond sombre de la jungle et garantisse le contraste RGAA.
-    background-color: rgba(255, 255, 255, 0.05); 
+    background-color: rgba(255, 255, 255, 0.05);
 
     // 3. LE CHAMP DE SAISIE TEXTE (<input>)
     input {
         // flex: 1 prend tout l'espace disponible restant dans la barre.
         flex: 1;
-        
+
         // RÈGLE DE SÉCURITÉ FLEXBOX CRUCIALE :
         // Par défaut, un input a une largeur minimale incompressible.
         // "min-width: 0" lui permet de se rétrécir sans déborder sur les petits écrans (ex: iPhone SE).
-        min-width: 0; 
-        
-        background: transparent; 
+        min-width: 0;
+
+        background: transparent;
         border: none;
         color: $clr-white;
         padding: 12px 25px;
         font-family: $font-body; // Police Inter pour une lisibilité parfaite
         font-size: 15px;
-        outline: none; 
+        outline: none;
 
         // Placeholder semi-transparent mais suffisamment contrasté pour Lighthouse
         &::placeholder {
-            color: rgba(255, 255, 255, 0.7); 
+            color: rgba(255, 255, 255, 0.7);
         }
 
         // 4. NEUTRALISATION DU FOND BLANC D'AUTOCOMPLÉTION
         // Quand Chrome pré-remplit un champ, il met un fond blanc qui casse le design sombre.
         // Cette astuce avec une ombre interne transparente conserve le thème sombre intact.
         &:-webkit-autofill,
-        &:-webkit-autofill:hover, 
-        &:-webkit-autofill:focus, 
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus,
         &:-webkit-autofill:active {
             -webkit-box-shadow: 0 0 0 30px transparent inset !important;
             -webkit-text-fill-color: $clr-white !important;
@@ -62,11 +62,11 @@
     // 5. LE BOUTON D'ACTION "RECHERCHER"
     .search-btn {
         background-color: $clr-gold; // Doré végétal (#c4a47c) de ma charte
-        color: $clr-bg;              // Texte sombre pour respecter le ratio de contraste 4.5:1
+        color: $clr-bg; // Texte sombre pour respecter le ratio de contraste 4.5:1
         border: none;
         padding: 15px 30px;
         border-radius: 50px;
-        font-family: $font-titles;   // Police Cinzel pour la signature botanique
+        font-family: $font-titles; // Police Cinzel pour la signature botanique
         font-size: 14px;
         font-weight: bold;
         letter-spacing: 1px;
@@ -75,7 +75,7 @@
         // Effet au survol : légère mise en valeur sans saut brusque
         &:hover {
             opacity: 0.9;
-            transform: scale(1.02); 
+            transform: scale(1.02);
         }
     }
 }

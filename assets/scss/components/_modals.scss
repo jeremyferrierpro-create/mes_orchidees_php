@@ -12,13 +12,13 @@
     position: fixed;
     inset: 0;
     background-color: rgba(6, 14, 10, 0.8); // Assombrissement vert-noir profond
-    backdrop-filter: blur(6px);              // Flou d'arrière-plan pour isoler la modale
+    backdrop-filter: blur(6px); // Flou d'arrière-plan pour isoler la modale
     z-index: 500;
-    
+
     // GESTION CRUCIALE LIGHTHOUSE & ACCESSIBILITÉ :
     // Fermée par défaut en "display: none". Les lecteurs d'écran et l'arbre d'accessibilité
     // ignorent ainsi totalement les éléments interactifs masqués tant qu'elle n'est pas ouverte.
-    display: none; 
+    display: none;
     align-items: center;
     justify-content: center;
     opacity: 0;
@@ -40,27 +40,28 @@
     // DIMENSIONS FLUIDES SANS DÉBORDEMENT :
     // Prend 92% de la largeur sur smartphone et se plafonne à 700px sur grand écran.
     width: min(92%, 700px);
-    
+
     // DÉFILEMENT INTERNE SÉCURISÉ :
     // Bloqué à 88% de la hauteur de l'écran (vh). Si l'utilisateur est sur un écran réduit
     // ou en mode paysage, le contenu ne déborde jamais et s'affiche avec un ascenseur propre.
     max-height: 88vh;
-    overflow-y: auto; 
-    
+    overflow-y: auto;
+
     // ESPACEMENT ADAPTATIF :
     // clamp() fait varier automatiquement les marges de 15px (mobile) à 30px (desktop).
     padding: clamp(15px, 3vw, 30px);
-    
+
     // Adaptations fines via mes mixins responsive
     @include respond-to('xs') {
         width: 95%;
         padding: 15px;
     }
+
     @include respond-to('micro') {
         width: 100%;
         border-radius: 0; // Plein écran sur les très vieux téléphones (320px)
     }
-    
+
     border-radius: 8px;
     position: relative;
     @include glass-effect;
@@ -112,11 +113,12 @@
             height: 140px;
             object-fit: cover;
             border-radius: 4px;
-            
+
             @include respond-to('xs') {
                 width: 120px;
                 height: 120px;
             }
+
             @include respond-to('micro') {
                 width: 100px;
                 height: 100px;
@@ -224,7 +226,7 @@
             border-radius: 30px;
             margin: 0;
             text-align: justify;
-            
+
             @include respond-to('xs') {
                 padding: 15px;
                 border-radius: 15px;
