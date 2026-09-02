@@ -1,19 +1,26 @@
 # Désactiver le listage des répertoires
 Options -Indexes
 
-# Protection des fichiers sensibles
+# Protection des fichiers sensibles cachés (.git, .env, etc.)
 <FilesMatch "^\.">
     Require all denied
 </FilesMatch>
-<FilesMatch "\.(env|sql|md|json)$">
+
+# Protection des fichiers techniques / configs
+<FilesMatch "\.(env|sql|md|lock)$">
     Require all denied
 </FilesMatch>
 
-# Protection spécifique du dossier api/migration
+# Protection spécifique du dossier des migrations SQL
 RewriteEngine On
 RewriteRule ^api/migration(/.*)?$ - [F,L]
 
 # MIME type pour les modules JavaScript ES6
 <FilesMatch "\.js$">
     ForceType text/javascript
+</FilesMatch>
+
+# MIME type explicite pour le Web App Manifest
+<FilesMatch "manifest\.json$">
+    ForceType application/manifest+json
 </FilesMatch>
