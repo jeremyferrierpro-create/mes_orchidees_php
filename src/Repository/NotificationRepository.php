@@ -99,6 +99,36 @@ class NotificationRepository
     }
 
     /**
+     * Notifications NON LUES d'un type donné pour l'utilisateur (toast temps réel).
+     *
+     * Isolation stricte (RG1) : `WHERE user_id = :uid` — un modérateur ne reçoit
+     * JAMAIS les alertes d'un autre compte. Le type est validé contre le vocabulaire
+     * fermé `Notification::TYPES` ; une valeur hors liste renvoie une liste vide
+     * (aucune injection, aucun type fantôme). Tri du plus récent au plus ancien.
+     *
+     * @param string   $userId Destinataire (modérateur / admin).
+     * @param string   $type   Un des Notification::TYPES (ex : 'nouvelle_proposition').
+     * @param int|null $limit  Optionnel : nombre maximal de lignes (antiboisement).
+     * @return Notification[]
+     */
+    public function findUnreadByTypeForUser(string $userId, string $type, ?int $limit = null): array
+    {
+        if (!in_array($type, Notification::TYPES, true)) {
+            return [];
+        }
+        $sql  = self::SELECT_JOINED
+              . ' WHERE n.user_id = :uid AND n.type = :type AND n.is_read = 0'
+              . ' ORDER BY n.notif_date DESC, n.created_at DESC';
+        $args = [':uid' => $userId, ':type' => $type];
+        if ($limit !== null && $limit > 0) {
+            $sql .= ' LIMIT ' . (int) $limit;
+        }
+        $stmt = $this->pdo()->prepare($sql);
+        $stmt->execute($args);
+        return array_map(fn(array $r) => Notification::fromRow($r), $stmt->fetchAll());
+    }
+
+    /**
      * Marque une notification comme lue, UNIQUEMENT si elle appartient à l'utilisateur.
      *
      * @param string $id     UUID de la notification.

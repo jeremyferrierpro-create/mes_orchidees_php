@@ -17,6 +17,7 @@
  * @var \App\Entity\Soin[] $soins
  * @var \App\Entity\TypeSoin[] $typesSoin
  * @var \App\Entity\Notification|null $prochainRappel
+ * @var \App\Entity\Emplacement[] $emplacements
  * @var string $csrf
  */
 $img = $item->displayImageUrl();
@@ -93,7 +94,17 @@ $img = $item->displayImageUrl();
             <input type="hidden" name="orchid_id" value="<?= e($item->orchidId) ?>">
 
             <div class="form-field">
-                <label for="location">Emplacement</label>
+                <label for="emplacement_id">Emplacement</label>
+                <select id="emplacement_id" name="emplacement_id">
+                    <option value="">— Aucun endroit —</option>
+                    <?php foreach ($emplacements as $emp): ?>
+                        <option value="<?= e($emp->id) ?>"<?= $item->emplacementId === $emp->id ? ' selected' : '' ?>><?= e($emp->nom) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <small class="field-help">Une plante est rattachée à un seul endroit. <a href="<?= e(url('/macollection/parametres')) ?>">Gérer mes endroits</a>.</small>
+            </div>
+            <div class="form-field">
+                <label for="location">Précision d'emplacement (libre)</label>
                 <input type="text" id="location" name="location" value="<?= e($item->location) ?>">
             </div>
             <div class="form-field">

@@ -3,6 +3,10 @@ projet_fil_rouge/
 *.fig
 *.pdf
 *.docx
+*.docs
+*archive
+*legacy
+
 .env
 .env.*
 !.env.example
@@ -13,8 +17,21 @@ node_modules/
 
 # --- Configuration agent IDE (non source applicatif) ---
 /.agent/
+/.vscode/
+# --- Archive legacy (site PHP plat hérité, non utilisé par l'app MVC) ---
+# Conservée localement, jamais versionnée dans le dépôt neuf.
+/archive/
 
-# --- Documentations / supports de cours hors application web ---
-/docs/MODULES/
-/docs/site_html/
-/docs/support_formateur/
+# --- Documentation de fondation / préparation (conservée localement) ---
+# decision owner #2 : docs/** ne doit pas être versionné.
+/docs/
+# Variante « .docs » (documentation de fondation à la racine) : exclue pour le
+# même motif. Signalée au propriétaire pour ratification (interprétation de docs/**).
+/.docs/
+
+# --- Schéma Supabase non retenu pour le dépôt neuf (decision owner #5) ---
+/data/schema_supabase.sql
+
+# --- Capture héritée non requise par l'application (decision owner #6) ---
+/public/assets/images/Capture*.png
+/public/assets/images/uploads/

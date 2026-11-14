@@ -27,6 +27,8 @@ class Collection
     public ?string $legacyId = null;
     public string $userId = '';
     public string $orchidId = '';
+    /** Endroit de culture rattaché (1 plante = 1 endroit) — FK emplacements.id, null si non paramétré. */
+    public ?string $emplacementId = null;
     public ?string $location = null;
     public ?string $notes = null;
     public ?string $temp = null;
@@ -57,6 +59,8 @@ class Collection
     public ?string $orchidName = null;
     public ?string $orchidImg = null;
     public ?string $orchidVernacular = null;
+    /** Comportement de l'espèce jointe (ex : « Epiphyte ») — sert aux stats du tableau de bord. */
+    public ?string $orchidBehavior = null;
 
     /**
      * Construit une entité à partir d'une ligne (colonnes snake_case de `collections`,
@@ -72,6 +76,7 @@ class Collection
         $c->legacyId     = $row['legacy_id'] ?? null;
         $c->userId       = (string) ($row['user_id'] ?? '');
         $c->orchidId     = (string) ($row['orchid_id'] ?? '');
+        $c->emplacementId = $row['emplacement_id'] ?? null;
         $c->location     = $row['location'] ?? null;
         $c->notes        = $row['notes'] ?? null;
         $c->temp         = $row['temp'] ?? null;
@@ -88,6 +93,7 @@ class Collection
         $c->orchidName        = $row['orchid_name'] ?? null;
         $c->orchidImg         = $row['orchid_img'] ?? null;
         $c->orchidVernacular  = $row['orchid_vernacular'] ?? null;
+        $c->orchidBehavior    = $row['orchid_behavior'] ?? null;
 
         return $c;
     }
@@ -158,6 +164,7 @@ class Collection
             'id'          => $this->id,
             'orchidId'    => $this->orchidId,
             'orchidName'  => $this->orchidName,
+            'emplacementId' => $this->emplacementId,
             'location'    => $this->location,
             'notes'       => $this->notes,
             'temp'        => $this->temp,

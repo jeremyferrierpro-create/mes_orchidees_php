@@ -86,6 +86,43 @@ class NotificationController extends AbstractController
     }
 
     /**
+     * GET /api/notifications/propositions — Flux JSON des nouvelles propositions
+     * non lues destinées au MODÉRATEUR/Admin connecté (toast d'alerte temps réel).
+     *
+     * Le route est GRANT_MODO : la 403 du front-controller filtre déjà un utilisateur
+     * ordinaire. Le destinataire est lu UNIQUEMENT en session (RG1) — jamais depuis la
+     * requête —, et la requête serveur filtre `type = 'nouvelle_proposition'` + `is_read
+     * = 0`. On ne lit ni ne modifie AUCUNE notification d'un autre compte.
+     *
+     * Réponse stable (front `features/moderation-toast.js`) :
+     *   { status:'ok', count:int, moderationUrl:string, readUrlBase:string, csrf:string,
+     *     propositions:[ Notification::toArray() ] }
+     * Le jeton CSRF ne voyage que dans cette réponse authentifiée (marquage « lu »).
+     *
+     * @return string Corps JSON (200).
+     */
+    public function propositions(): string
+    {
+        $uid = $this->currentUserId();
+        if ($uid === '') {
+            return $this->json(['status' => 'ko', 'count' => 0, 'propositions' => []], 403);
+        }
+
+        // On plafonne côté serveur : au-delà, l'empilement de toasts monopoliserait l'écran
+        // (le lien « Modérer » mène à /moderation où toute la file est visible).
+        $liste = $this->notifications->findUnreadByTypeForUser($uid, 'nouvelle_proposition', 5);
+
+        return $this->json([
+            'status'        => 'ok',
+            'count'         => count($liste),
+            'moderationUrl' => url('/moderation'),
+            'readUrlBase'   => url('/notification'),
+            'csrf'          => $this->getCsrfToken(),
+            'propositions'  => array_map(fn(\App\Entity\Notification $n) => $n->toArray(), $liste),
+        ]);
+    }
+
+    /**
      * POST /notification/{id}/read — Marque la notification comme lue (isolation).
      *
      * Authentifié (grant), CSRF vérifié (`assertCsrf` → 400 sinon), RG1 :

@@ -128,6 +128,10 @@ CREATE TABLE IF NOT EXISTS collections (
     legacy_id   VARCHAR(100)           COMMENT 'Cle JS originale (col-xxxxx). Migration localStorage.',
     user_id     CHAR(36)     NOT NULL,
     orchid_id   VARCHAR(200) NOT NULL,
+    -- Endroit de culture rattache (1 plante = 1 endroit). NULL = plante sans
+    -- endroit parametre. ON DELETE SET NULL : la plante survit a la suppression
+    -- de son endroit. Voir migration 20261022_emplacements_culture.sql.
+    emplacement_id CHAR(36)  NULL COMMENT 'FK emplacements — lieu de culture de cette plante',
     -- Donnees contextuelles personnalisees par le proprietaire
     location    VARCHAR(200)           COMMENT 'Ex: Fenetre Est salon',
     notes       TEXT,
@@ -155,11 +159,41 @@ CREATE TABLE IF NOT EXISTS collections (
     KEY idx_collections_orchid_id (orchid_id),
     UNIQUE KEY uq_collections_user_legacy (user_id, legacy_id),
     CONSTRAINT fk_collections_user   FOREIGN KEY (user_id)   REFERENCES users(id)   ON DELETE CASCADE,
-    CONSTRAINT fk_collections_orchid FOREIGN KEY (orchid_id) REFERENCES orchids(id) ON DELETE RESTRICT
+    CONSTRAINT fk_collections_orchid FOREIGN KEY (orchid_id) REFERENCES orchids(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_collections_emplacement FOREIGN KEY (emplacement_id) REFERENCES emplacements(id) ON DELETE SET NULL
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4
   COLLATE=utf8mb4_unicode_ci
   COMMENT='Collection personnelle. Table de jointure enrichie entre users et orchids. Remplace collections.json.';
+
+-- ---------------------------------------------------------------------------
+-- 3b. TABLE : emplacements
+-- ---------------------------------------------------------------------------
+-- Lieu de culture d'un collectionneur, avec ses constantes climatiques STRUCTUREES.
+-- Une plante (collections) est rattachee a UN SEUL endroit (collections.emplacement_id).
+-- Alimente la carte « CLIMAT » du tableau de bord (moyenne ponderee par plante).
+-- Ajout realise par la migration data/migrations/20261022_emplacements_culture.sql.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS emplacements (
+    id          CHAR(36)     NOT NULL,
+    user_id     CHAR(36)     NOT NULL,
+    nom         VARCHAR(200) NOT NULL COMMENT 'Ex: Serre chaude, Fenetre Est du salon',
+    temp_min    DECIMAL(4,1) NULL COMMENT 'Temperature minimale (degres C)',
+    temp_max    DECIMAL(4,1) NULL COMMENT 'Temperature maximale (degres C)',
+    hygro_min   TINYINT      NULL COMMENT 'Hygrometrie minimale (%)',
+    hygro_max   TINYINT      NULL COMMENT 'Hygrometrie maximale (%)',
+    lumiere     ENUM('faible','moyenne','forte') NULL COMMENT 'Niveau de lumiere dominant',
+    ventilation VARCHAR(100),
+    created_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_emplacements_user (user_id),
+    CONSTRAINT fk_emplacements_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci
+  COMMENT='Endroits de culture d un collectionneur, avec leurs constantes climatiques structurees.';
 
 -- ---------------------------------------------------------------------------
 -- 4b. TABLES DE LOOKUP (3NF sélective — voir docs/architecture/00-arbitrage-denormalisation.md)

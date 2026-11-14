@@ -7,8 +7,12 @@
  *  - $nbEnAttente : int
  *  - $csrf        : string
  *
- * Chaque proposition offre : édition complète, APPROUVER (publie + RG5 notifie l'auteur)
- * et REFUSER (supprime + RG5 notifie l'auteur).
+ * Chaque proposition offre : un PANNEAU DE VÉRIFICATION des caractéristiques (le
+ * modérateur contrôle avant de trancher), ÉDITER (Correction des données — ouverte
+ * aux modérateurs depuis la bascule GRANT_MODO de /update/orchid), APPROUVER (publie
+ * + notifie l'auteur, RG5 — sous réserve de cocher « je certifie avoir vérifié ») et
+ * REFUSER (rejet SOFT : la fiche est conservée pour son propriétaire, jamais publiée,
+ * + notifie l'auteur, RG5).
  *
  * @package App\Templates\Pages\Moderation
  * @var \App\Entity\Orchid[] $pending
@@ -38,12 +42,35 @@
                                   Cattleya deviendraient indiscernables pour le modérateur. */ ?>
                         <h3><?= e($o->name) ?></h3>
                         <?php if ($o->vernacular): ?><p class="vernacular-name"><?= e($o->vernacular) ?></p><?php endif; ?>
+
+                        <?php /* Panneau de vérification : le modérateur CONTROLLE les
+                                  caractéristiques saisies par l'auteur AVANT d'approuver.
+                                  Un champ absent de la proposition (non capturé au dépôt)
+                                  s'affiche en « — » : c'est ce qu'il reste à compléter via
+                                  « Éditer ». La description longue ne tient pas sur la carte,
+                                  elle se révise dans l'éditeur. */ ?>
+                        <dl class="moderation-review">
+                            <div><dt>Genre</dt><dd><?= e($o->genre !== '' ? $o->genre : '—') ?></dd></div>
+                            <div><dt>Famille</dt><dd><?= e($o->family !== '' ? $o->family : '—') ?></dd></div>
+                            <div><dt>Comportement</dt><dd><?= e($o->behavior ?? '—') ?></dd></div>
+                            <div><dt>Espèce</dt><dd><?= e($o->species ?? '—') ?></dd></div>
+                            <div><dt>Ordre</dt><dd><?= e($o->botanicalOrder ?? '—') ?></dd></div>
+                            <div><dt>Origine</dt><dd><?= e($o->origin ?? '—') ?></dd></div>
+                        </dl>
                         <p class="short-desc"><?= e($o->shortDesc ?? '—') ?></p>
 
                         <div class="form-actions moderation-actions">
                             <a class="btn-secondary btn-mini" href="<?= e(url('/update/orchid/' . rawurlencode($o->id))) ?>">Éditer</a>
-                            <form method="post" action="<?= e(url('/moderation/' . rawurlencode($o->id) . '/approve')) ?>" class="inline-form">
+                            <form method="post" action="<?= e(url('/moderation/' . rawurlencode($o->id) . '/approve')) ?>" class="inline-form moderation-approve">
                                 <input type="hidden" name="csrf_token" value="<?= e($csrf) ?>">
+                                <?php /* Obligation de vérifier : la case est « required »,
+                                          le navigateur empêche d'approuver sans l'avoir cochée.
+                                          Le serveur reste tolérant sur ce champ (rétrocompatible) ;
+                                          la contrainte est avant tout le parcours de revue ci-dessus. */ ?>
+                                <label class="moderation-certify">
+                                    <input type="checkbox" name="verified" required>
+                                    Je certifie avoir vérifié les caractéristiques
+                                </label>
                                 <button type="submit" class="btn-primary btn-mini">Approuver</button>
                             </form>
                             <form method="post" action="<?= e(url('/moderation/' . rawurlencode($o->id) . '/reject')) ?>"

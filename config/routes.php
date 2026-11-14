@@ -45,7 +45,10 @@ function register_routes(Router $router): void
     $router->mapController('POST',   '/login',     \App\Controller\AuthController::class, 'login',      GRANT_PUBLIC);
     $router->mapController('GET',    '/register',  \App\Controller\AuthController::class, 'registerForm', GRANT_PUBLIC);
     $router->mapController('POST',   '/register',  \App\Controller\AuthController::class, 'register',   GRANT_PUBLIC);
-    $router->mapController('POST',   '/logout',    \App\Controller\AuthController::class, 'logout',     GRANT_AUTH);
+    // Déconnexion : route PUBLIQUE et idempotente. Quitter une session déjà absente
+    // n'expose aucune donnée ; le CSRF reste exigée par le contrôleur dès qu'une vraie
+    // session existe (GRANT_PUBLIC ici n'affaiblit donc pas la sécurité, cf. AuthController::logout).
+    $router->mapController('POST',   '/logout',    \App\Controller\AuthController::class, 'logout',     GRANT_PUBLIC);
     $router->mapController('GET',    '/me',        \App\Controller\AuthController::class, 'me',         GRANT_AUTH);
 
     // --------- 4.2 Pages de contenu (vues) ---------
@@ -65,8 +68,11 @@ function register_routes(Router $router): void
     $router->mapController('POST', '/orchid/new',         \App\Controller\OrchidController::class, 'create',   GRANT_ADMIN);
     $router->mapController('POST', '/orchid/propose',     \App\Controller\OrchidController::class, 'propose',  GRANT_AUTH);
     $router->mapController('POST', '/orchid/delete/{id}', \App\Controller\OrchidController::class, 'delete',   GRANT_ADMIN);
-    $router->mapController('GET',  '/update/orchid/{id}', \App\Controller\OrchidController::class, 'editForm', GRANT_ADMIN);
-    $router->mapController('POST', '/update/orchid',      \App\Controller\OrchidController::class, 'update',   GRANT_ADMIN);
+    // Édition ouverte aux modérateurs (GRANT_MODO) : avant d'approuver une proposition,
+    // le modérateur DOIT pouvoir vérifier et corriger les caractéristiques botaniques
+    // saisies par l'auteur. La CRÉATION depuis zéro (/orchid/new) reste réservée à l'admin.
+    $router->mapController('GET',  '/update/orchid/{id}', \App\Controller\OrchidController::class, 'editForm', GRANT_MODO);
+    $router->mapController('POST', '/update/orchid',      \App\Controller\OrchidController::class, 'update',   GRANT_MODO);
     // Route dynamique AFTER les statiques :
     $router->mapController('GET',  '/orchid/{id}',        \App\Controller\OrchidController::class, 'show',     GRANT_PUBLIC);
 
@@ -85,6 +91,13 @@ function register_routes(Router $router): void
     $router->mapController('POST', '/collection/delete/{id}',\App\Controller\CollectionController::class, 'delete',  GRANT_AUTH);
     $router->mapController('GET',  '/collection/{id}',       \App\Controller\CollectionController::class, 'show',    GRANT_AUTH);
 
+    // --------- 4.3 bis Paramétrage des endroits de culture (propriétaire — RG1) ---------
+    // Page dédiée + CRUD des lieux climatisés alimentant la carte « CLIMAT » du dashboard.
+    $router->mapController('GET',  '/macollection/parametres',   \App\Controller\CollectionController::class, 'parametres',        GRANT_AUTH);
+    $router->mapController('POST', '/emplacement/new',           \App\Controller\CollectionController::class, 'createEmplacement', GRANT_AUTH);
+    $router->mapController('POST', '/update/emplacement',        \App\Controller\CollectionController::class, 'updateEmplacement', GRANT_AUTH);
+    $router->mapController('POST', '/emplacement/delete/{id}',   \App\Controller\CollectionController::class, 'deleteEmplacement', GRANT_AUTH);
+
     // --------- 4.3 Soins (rattachés à une collection de l'owner) ---------
     $router->mapController('GET',  '/soins',             \App\Controller\SoinController::class, 'index',   GRANT_AUTH);
     $router->mapController('POST', '/soin/new',          \App\Controller\SoinController::class, 'create',  GRANT_AUTH);
@@ -96,6 +109,11 @@ function register_routes(Router $router): void
     $router->mapController('POST', '/notification/{id}/read',   \App\Controller\NotificationController::class, 'markRead', GRANT_AUTH);
     $router->mapController('POST', '/notification/delete/{id}', \App\Controller\NotificationController::class, 'delete',   GRANT_AUTH);
     $router->mapController('GET',  '/notification/{id}',        \App\Controller\NotificationController::class, 'show',     GRANT_AUTH);
+
+    // Flux JSON des « nouvelles propositions » non lues du modérateur courant : alimente
+    // le toast d'alerte posé sur l'écran d'un admin/modérateur (notification temps réel).
+    // GRANT_MODO : un utilisateur ordinaire reçoit la 403 générique, jamais les alertes d'autrui.
+    $router->mapController('GET',  '/api/notifications/propositions', \App\Controller\NotificationController::class, 'propositions', GRANT_MODO);
 
     // --------- 4.3 bis Rappels de soins (RG3 étendu — cycle de vie) ---------
     $router->mapController('GET',  '/rappels',                       \App\Controller\RappelController::class, 'index',   GRANT_AUTH);

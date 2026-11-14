@@ -32,9 +32,12 @@ import { initAddButton } from './features/add-button.js';
 import { initCollection } from './features/collection.js';
 import { initAdministration } from './features/administration.js';
 import { initConseils } from './features/conseils.js';
+import { initConseilsLive } from './features/conseils-live.js';
 import { initAuthForm } from './features/authentication.js';
 import { initRappelsToast } from './features/rappels-toast.js';
 import { initRappelsModal } from './features/rappels-modal.js';
+import { initCollectionAdd } from './features/collection-add.js';
+import { initModerationToast } from './features/moderation-toast.js';
 
 // J'importe mon petit routeur maison. Il analyse l'URL courante et me renvoie
 // un identifiant simple ("home", "collection", "administration"...).
@@ -58,14 +61,19 @@ const featureInitializers = {
     // Phase D : la modale « Gerer mes rappels » vit sur le dashboard et la
     // fiche plante ; son module se met en no-op tout seul si le squelette
     // #rappels-modal est absent de la page courante.
-    'collection-dashboard': initRappelsModal,
+    // Sur le dashboard, la modale « Ajouter une orchidée » (#collection-add) est
+    // pilote par initCollectionAdd (autocomplete + auto-remplissage) ; no-op ailleurs.
+    'collection-dashboard': () => { initRappelsModal(); initCollectionAdd(); },
     'collection-detail': initRappelsModal,
     rappels: () => {},
     'admin-dashboard': () => {},
 
     // Conseils / authentication : initialiseurs historiques deja proteges (ils
     // sortent en no-op si leur DOM n'est pas present sur la page serveur).
-    conseils: initConseils,
+    // Sur la vue Conseils MVC, initConseils (legacy) ne trouve pas sa modale et
+    // sort en no-op ; initConseilsLive prend le relais pour le filtrage live des
+    // fiches "par plante" a la saisie.
+    conseils: () => { initConseils(); initConseilsLive(); },
     authentication: initAuthForm,
 
     // Compatibilite avec les anciennes pages statiques *.php (non servies par
@@ -92,6 +100,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // l'amorce #rappels-toast-bootstrap (utilisateur authentifié). async : je
     // n'attends pas et le module ne lève jamais (try/catch interne).
     initRappelsToast();
+
+    // Toast temps réel du modérateur (nouvelle proposition à vérifier) : transverse,
+    // il ne fait de réseau que si le footer a rendu l'amorce #propositions-toast-bootstrap
+    // (admin/modérateur authentifié). async + try/catch interne : ne bloque jamais le boot.
+    initModerationToast();
     
     // Ensuite, je ne lance que le module qui correspond Ã  la page actuelle.
     // Pourquoi ce dÃ©coupage ? Pour Ã©viter de charger inutilement le code de la

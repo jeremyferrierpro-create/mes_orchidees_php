@@ -35,15 +35,12 @@ function handleKeyDown(event) {
         return;
     }
 
-    // J'écoute la touche Échap (Escape). Pourquoi ? Pour garantir une sortie
-    // rapide sans souris, exigence RGAA/WCAG 2.1 : l'utilisateur au clavier doit
-    // pouvoir fermer la modale en une seule frappe, sans avoir à tabuler jusqu'au ×.
+
     if (event.key === 'Escape') {
         close(activeModal);
     }
 
-    // J'intercepte la touche Tab et je délègue à mon Focus Trap.
-    // Sans cela, l'utilisateur pourrait tabuler vers l'arrière-plan et se perdre.
+
     if (event.key === 'Tab') {
         trapFocus(activeModal, event);
     }
@@ -62,42 +59,27 @@ export function open(modalElement, triggerElement = null) {
         return;
     }
 
-    // Si une autre modale était déjà ouverte, je la ferme proprement avant.
-    // Pourquoi ? Pour éviter deux fonds sombres superposés et deux Focus Trap actifs.
+
     if (activeModal && activeModal !== modalElement) {
         close(activeModal);
     }
 
     activeModal = modalElement;
-    // Je sauvegarde l'élément qui avait le focus avant l'ouverture.
-    // Pourquoi ? Pour pouvoir restituer automatiquement le curseur clavier sur le
-    // bouton d'origine à la fermeture, comme l'exige le RGAA 12.9. Sans cela,
-    // l'utilisateur non-voyant perdrait sa position dans la page.
+
     lastFocusedElement = triggerElement || document.activeElement;
     previousBodyOverflow = document.body.style.overflow;
 
     modalElement.classList.add('active');
-    // Je bascule aria-hidden de "true" à "false" pour avertir immédiatement les
-    // technologies d'assistance (lecteurs d'écran NVDA, JAWS, VoiceOver) que ce
-    // contenu devient visible. J'ai aussi prévu en HTML les attributs
-    // role="dialog" et aria-modal="true" sur la modale pour indiquer que c'est
-    // une fenêtre de dialogue qui bloque l'interaction avec l'arrière-plan.
+
     modalElement.setAttribute('aria-hidden', 'false');
-    // Je bloque le défilement de l'arrière-plan avec overflow = 'hidden'.
-    // Pourquoi ? Pour éviter le "scroll bleed" : quand on scrolle dans une modale
-    // longue, on ne veut pas que la page derrière bouge aussi, ce qui désoriente.
+
     document.body.style.overflow = 'hidden';
 
-    // Je m'assure de ne pas accumuler plusieurs écouteurs keydown. J'enlève
-    // l'ancien avant d'ajouter le nouveau : c'est une bonne pratique pour éviter
-    // les fuites mémoire et les doubles fermetures.
+
     document.removeEventListener('keydown', handleKeyDown);
     document.addEventListener('keydown', handleKeyDown);
 
-    // Après un court délai de 50ms (le temps que la transition CSS se lance),
-    // je place le focus sur le bouton de fermeture. Pourquoi ? Pour que
-    // l'utilisateur au clavier soit immédiatement à l'intérieur de la modale et
-    // n'ait pas à tabuler depuis le fond de page.
+
     window.setTimeout(() => {
         const closeButton = modalElement.querySelector('.modal-close, .close-modal');
 

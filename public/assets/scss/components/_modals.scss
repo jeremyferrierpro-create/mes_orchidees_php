@@ -8,16 +8,13 @@
 // A. LE VOILE D'ARRIÈRE-PLAN (.modal-overlay)
 // --------------------------------------------------------------------------
 .modal-overlay {
-    // Couvre 100% de la fenêtre active, même si la page est défilée
+
     position: fixed;
     inset: 0;
-    background-color: rgba(6, 14, 10, 0.8); // Assombrissement vert-noir profond
-    backdrop-filter: blur(6px); // Flou d'arrière-plan pour isoler la modale
+    background-color: rgba(6, 14, 10, 0.8);
+    backdrop-filter: blur(6px);
     z-index: 500;
 
-    // GESTION CRUCIALE LIGHTHOUSE & ACCESSIBILITÉ :
-    // Fermée par défaut en "display: none". Les lecteurs d'écran et l'arbre d'accessibilité
-    // ignorent ainsi totalement les éléments interactifs masqués tant qu'elle n'est pas ouverte.
     display: none;
     align-items: center;
     justify-content: center;
@@ -25,8 +22,15 @@
     pointer-events: none;
     transition: opacity 0.3s ease;
 
-    // Classe injectée par JavaScript (modal.js) à l'ouverture
+
     &.active {
+        display: flex;
+        opacity: 1;
+        pointer-events: all;
+    }
+
+
+    &:target {
         display: flex;
         opacity: 1;
         pointer-events: all;
@@ -37,21 +41,17 @@
 // B. LA BOÎTE DE CONTENU (.modal-container)
 // --------------------------------------------------------------------------
 .modal-container {
-    // DIMENSIONS FLUIDES SANS DÉBORDEMENT :
-    // Prend 92% de la largeur sur smartphone et se plafonne à 700px sur grand écran.
+
     width: min(92%, 700px);
 
-    // DÉFILEMENT INTERNE SÉCURISÉ :
-    // Bloqué à 88% de la hauteur de l'écran (vh). Si l'utilisateur est sur un écran réduit
-    // ou en mode paysage, le contenu ne déborde jamais et s'affiche avec un ascenseur propre.
+
     max-height: 88vh;
     overflow-y: auto;
 
-    // ESPACEMENT ADAPTATIF :
-    // clamp() fait varier automatiquement les marges de 15px (mobile) à 30px (desktop).
+
     padding: clamp(15px, 3vw, 30px);
 
-    // Adaptations fines via mes mixins responsive
+
     @include respond-to('xs') {
         width: 95%;
         padding: 15px;
@@ -59,13 +59,13 @@
 
     @include respond-to('micro') {
         width: 100%;
-        border-radius: 0; // Plein écran sur les très vieux téléphones (320px)
+        border-radius: 0;
     }
 
     border-radius: 8px;
     position: relative;
     @include glass-effect;
-    background-color: rgba(14, 32, 24, 0.85); // Vert forêt nuit très opaque pour lisibilité
+    background-color: rgba(14, 32, 24, 0.85);
 
     // BOUTON DE FERMETURE (CROIX ×)
     .modal-close {

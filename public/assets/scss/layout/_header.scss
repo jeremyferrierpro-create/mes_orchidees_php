@@ -74,4 +74,31 @@
         }
     }
 
+    // --- MESSAGE D'ACCUEIL (juste avant le bouton menu, quand on est connecté) ---
+    .header-user-greeting {
+        font-family: $font-body;
+        font-size: 15px;
+        font-weight: 400;
+        letter-spacing: 0.3px;
+        // Je ne prends pas tout l'espace (le tagline le fait déjà) : je me cale
+        // à droite, juste avant le bouton hamburger, avec une petite respiration.
+        margin: 0 18px 0 0;
+        white-space: nowrap;
+        color: rgba(255, 255, 255, 0.92);
+
+        @include respond-to('md') {
+            font-size: 13px;
+            margin-right: 12px;
+        }
+        @include respond-to('sm') {
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        @include respond-to('xs') {
+            // Sur très petit écran : logo + hamburger suffisent, je masque la phrase
+            // (le prénom reste visible dans la sidebar).
+            display: none;
+        }
+    }
+
 }

@@ -33,3 +33,205 @@
     padding: 20px;
     font-style: italic;
 }
+
+// Titre de section ("Conseils de base" / "Conseils par plante") : centré, avec
+// un court filet doré dessous — écho discret à la typographie de la landing.
+.conseils-section-title {
+    font-family: $font-titles;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: $clr-gold;
+    text-align: center;
+    margin: 8px 0 6px;
+
+    &::after {
+        content: "";
+        display: block;
+        width: 54px;
+        height: 2px;
+        margin: 10px auto 0;
+        border-radius: 2px;
+        background: linear-gradient(90deg, transparent, $clr-gold, transparent);
+    }
+}
+
+// Deuxième section (« Conseils par plante ») : on respire d'avec la précédente.
+.conseils-grid-container + .conseils-grid-container {
+    margin-top: clamp(8px, 2vw, 20px);
+}
+
+// ==========================================================================
+// ORGANISATION DES CARTES (page Conseils)
+// ==========================================================================
+// Objectif : récupérer la qualité de la landing page. Une grille nette, des
+// cartes de HAUTEUR ÉGALE qui remplissent leur colonne (jamais étirées en
+// cartes géantes quand il y a peu de résultats), des VISUELS UNIFORMES (image
+// recadrée « cover », fini les rectangles blancs de letterboxing) et une
+// hiérarchie typographique cohérente entre « Conseils de base » et « Conseils
+// par plante ». Tout est scopé sous .conseils-grid-container pour ne rien
+// changer aux autres pages qui partagent .orchid-grid / .orchid-card.
+
+// Grille : auto-FILL conserve les pistes vides → les cartes gardent une taille
+// constante même avec 2 résultats (avec auto-FIT, 2 cartes s'étiraient sur toute
+// la largeur et « nageaient » dans le vide : l'effet « bâclé »).
+.conseils-grid-container .orchid-grid {
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    justify-content: start;
+    align-items: stretch;
+    gap: clamp(16px, 2vw, 22px);
+}
+
+// « Conseils de base » : 3 colonnes fixes → mes 6 cartes s'organisent en 2 lignes
+// de 3 (3 × 2), équilibrées et volontaires. Je place cette règle APRÈS la grille
+// générique (même spécificité) pour la primer ; repli sur 2 puis 1 colonne sur
+// petits écrans pour rester lisible.
+.conseils-grid-container .conseils-grid--base {
+    grid-template-columns: repeat(3, 1fr);
+
+    @include respond-to('sm') {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to('xs') {
+        grid-template-columns: 1fr;
+    }
+}
+
+// Cartes conseils : elles épousent leur colonne et toute la hauteur de la ligne.
+.conseils-grid-container .orchid-card {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 18px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+// Visuel : image recadrée à hauteur fixe → bande d'images homogène et premium.
+.conseils-grid-container .orchid-card .card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 10px;
+    margin-bottom: 0;
+}
+
+// Corps de carte : colonne flexible, texte aligné à gauche (plus lisible qu'un
+// bloc centré sur plusieurs lignes) ; le bouton sera poussé tout en bas.
+.conseils-grid-container .orchid-card .card-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 8px;
+    text-align: left;
+}
+
+.conseils-grid-container .orchid-card .card-info h3 {
+    font-size: 1.12rem;
+    line-height: 1.25;
+    text-align: left;
+    // 2 lignes maximum, troncature propre → cartes alignées.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.conseils-grid-container .orchid-card .short-desc {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: left;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+// Bouton d'action : pilule à gauche, toujours alignée en bas de carte.
+.conseils-grid-container .orchid-card .card-btn {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 0.8rem;
+    padding: 9px 20px;
+}
+
+// « Conseils de base » : légère emphase du titre (hiérarchie) sans déséquilibrer
+// la grille par rapport aux fiches par plante.
+.conseils-grid--base .orchid-card--advice-base .card-info h3 {
+    font-size: 1.22rem;
+}
+
+// Petit texte affiché à la place des fiches par plante quand aucune recherche
+// n'est saisie (elles n'apparaissent qu'en cherchant une orchidée).
+.conseils-plantes-hint {
+    text-align: center;
+    font-family: $font-body;
+    color: rgba(255, 255, 255, 0.82);
+    font-style: italic;
+    padding: 14px 0 4px;
+}
+
+// Les fiches "par plante" sont toutes rendues en DOM mais masquées par défaut ;
+// le module conseils-live.js retire .is-hidden au fil de la saisie. display:none
+// les sort aussi de l'accessibilité (lecteurs d'écran) quand elles ne servent pas.
+.conseils-plantes .orchid-card.is-hidden {
+    display: none;
+}
+
+// Message "aucune fiche par plante ne correspond" (affiché par le JS, aria-live).
+.conseils-plantes-empty {
+    text-align: center;
+    font-family: $font-body;
+    color: rgba(255, 255, 255, 0.9);
+    font-style: italic;
+    padding: 14px 0 4px;
+}
+
+// --------------------------------------------------------------------------
+// Cartes : "eyebrow" (petite étiquette de catégorie au-dessus du titre) et
+// pastilles de repères de culture. Ces classes sont posées par la vue
+// templates/pages/conseils/index.php (refonte des cartes, WP2).
+// --------------------------------------------------------------------------
+
+// Étiquette de catégorie au-dessus du titre : petit libellé doré, en capitales.
+.conseil-eyebrow {
+    font-family: $font-titles;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: $clr-gold;
+    opacity: 0.85;
+    margin: 0 0 6px;
+}
+
+// Repères de culture d'une fiche espèce : petite liste de pastilles (icône + texte).
+.conseil-care-chips {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    li {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background-color: rgba(196, 164, 124, 0.12);
+        border: 1px solid rgba(196, 164, 124, 0.22);
+        color: rgba(255, 255, 255, 0.85);
+        font-family: $font-body;
+        font-size: 0.72rem;
+        line-height: 1.2;
+
+        i {
+            color: $clr-gold;
+            font-size: 0.72rem;
+        }
+    }
+}

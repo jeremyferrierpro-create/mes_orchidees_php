@@ -850,25 +850,140 @@
     }
 }
 
-#dash-notifications {
+// En-tête d'une carte de stats : titre à gauche, engrenage « paramètres » à droite.
+.dash-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h3 {
+        margin-bottom: 0;
+    }
+}
+
+.dash-card__settings {
+    color: $clr-gold;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 4px;
+
+    &:hover,
+    &:focus {
+        color: $clr-white;
+    }
+}
+
+// Ligne « endroit » sous les valeurs climatiques (synthèse du lieu de culture).
+.dash-climate-where {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $clr-white;
+    font-family: $font-body;
+    font-size: 13px;
+
+    i {
+        color: $clr-gold;
+    }
+
+    a {
+        color: $clr-gold;
+        text-decoration: underline;
+    }
+}
+
+// Lien discret « Tout voir » en tête d'une carte de stats.
+.dash-card__more {
+    font-family: $font-titles;
+    font-size: 12px;
+    color: $clr-gold;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+
+    &:hover,
+    &:focus {
+        color: $clr-white;
+        text-decoration: underline;
+    }
+}
+
+// Carte NOTIFICATIONS : flux réel des notifications les plus récentes.
+.notif-badge {
+    font-family: $font-body;
+    font-size: 13px;
+    color: $clr-white;
+    margin: 0 0 12px;
+
+    strong {
+        color: $clr-gold;
+        font-size: 15px;
+    }
+}
+
+.notif-empty {
+    font-family: $font-body;
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.notif-feed {
     list-style: none;
     padding: 0;
     margin: 0;
 
     li {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        color: $clr-white;
-        font-family: $font-body;
-        font-size: 14px;
-        margin-bottom: 12px;
-
-        i {
-            color: $clr-gold;
-            width: 20px;
-        }
+        margin-bottom: 8px;
     }
+}
+
+.notif-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: $clr-white;
+    font-family: $font-body;
+    background-color: rgba(255, 255, 255, 0.04);
+    transition: background-color 0.2s ease;
+
+    i {
+        color: $clr-gold;
+        font-size: 14px;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    &:hover,
+    &:focus {
+        background-color: rgba(196, 164, 124, 0.16);
+    }
+
+    &.notif-row--unread {
+        border-left: 3px solid $clr-gold;
+        background-color: rgba(196, 164, 124, 0.1);
+    }
+}
+
+.notif-row__text {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.notif-row__date {
+    font-size: 11px;
+    opacity: 0.7;
+    white-space: nowrap;
 }
 
 .notif-dot {
@@ -888,8 +1003,10 @@
 
 .collection-workspace {
     display: grid;
-    // Grid 2fr 1fr : ma collection prend 2/3, les panneaux latéraux 1/3
-    grid-template-columns: 2fr 1fr;
+    // Grid 1fr 1fr : ma collection et les panneaux latéraux partagent la place à
+    // égalité. Avant (2fr 1fr), le tableau SOINS était écrasé dans 1/3 de largeur
+    // → dates et noms de plante coupés. Les cartes peuvent être agrandies.
+    grid-template-columns: 1fr 1fr;
     gap: 25px;
     align-items: start;
 
@@ -1021,25 +1138,98 @@
 }
 
 .care-table {
+    // table-layout:fixed + largeurs par colonne : chaque donnée a sa place
+    // garantie, plus de colonne qui « mange » la voisine (le décalage constaté).
+    table-layout: fixed;
     width: 100%;
     border-collapse: collapse;
     color: $clr-white;
     font-family: $font-body;
     font-size: 13px;
 
-    th {
+    th,
+    td {
         text-align: left;
+        // Alignement vertical centré : l'icône + date du rappel ne « pend » plus
+        // par rapport au texte des autres colonnes.
+        vertical-align: middle;
+        padding: 10px 8px;
+    }
+
+    th {
         font-family: $font-titles;
         font-size: 11px;
         color: $clr-gold;
         text-transform: uppercase;
-        padding: 8px 4px;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     td {
-        padding: 8px 4px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    // Répartition des 4 colonnes (Plante / Date / Soin / Prochain rappel).
+    th:nth-child(1), td:nth-child(1) { width: 36%; } // Plante (la plus longue)
+    th:nth-child(2), td:nth-child(2) { width: 19%; } // Date
+    th:nth-child(3), td:nth-child(3) { width: 19%; } // Soin
+    th:nth-child(4), td:nth-child(4) { width: 26%; } // Prochain rappel
+
+    // Dates et libellés courts : jamais sur deux lignes (ni coupés).
+    td:nth-child(2),
+    td:nth-child(3),
+    td:nth-child(4) {
+        white-space: nowrap;
+    }
+
+    // Nom de plante : il peut être long → on le laisse passer à la ligne sur une
+    // frontière de mot (jamais tronqué/ellipsé).
+    td:nth-child(1) {
+        white-space: normal;
+        overflow-wrap: break-word;
+        line-height: 1.3;
+    }
+}
+
+.care-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+// Lien plante d'une ligne du tableau SOINS : renvoie vers la fiche de suivi.
+.care-plant-link {
+    color: $clr-gold;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover,
+    &:focus {
+        text-decoration: underline;
+        color: $clr-white;
+    }
+}
+
+// Pastille « prochain rappel » cliquable (ouvre la modale Gérer mes rappels).
+.care-rappel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: $clr-white;
+    text-decoration: none;
+
+    i {
+        color: $clr-gold;
+    }
+
+    &.care-rappel--late i {
+        color: #ff9f43;
+    }
+
+    &.care-rappel--none {
+        opacity: 0.5;
     }
 }
 
@@ -1111,6 +1301,96 @@
             color: $clr-gold;
             text-transform: uppercase;
         }
+    }
+}
+
+// ------------------------------
+// MODALE : Ajouter une orchidée (recherche + auto-remplissage)
+// ------------------------------
+// La modale réutilise .modal-container.collection-modal (dimensionnement/scroll ci-dessus).
+// Le titre est atteignable au focus (tabindex="-1") posé par ModalManager.
+.collection-add-modal {
+    // Zone de recherche en position relative : sert de repère au menu déroulant.
+    .orchid-search-field {
+        position: relative;
+    }
+
+    // Menu de suggestions des espèces publiées (affiché par collection-add.js dès 3 caractères).
+    .orchid-suggest {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 30;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        max-height: 240px;
+        overflow-y: auto;
+        border-radius: 10px;
+        border: 1px solid rgba(196, 164, 124, 0.35);
+        background-color: rgba(14, 32, 24, 0.98);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+
+        &[hidden] {
+            display: none;
+        }
+
+        li {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: $clr-white;
+
+            &:hover,
+            &.is-active {
+                background-color: rgba(196, 164, 124, 0.18);
+            }
+        }
+
+        .suggest-name {
+            font-family: $font-titles;
+            font-size: 14px;
+            font-style: italic;
+            color: $clr-gold;
+        }
+
+        .suggest-sub {
+            font-family: $font-body;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    }
+
+    // Ligne de statut indiquant le mode courant (lier une espèce vs proposer).
+    .add-mode {
+        font-family: $font-body;
+        font-size: 12px;
+        line-height: 1.4;
+        color: rgba(255, 255, 255, 0.75);
+        margin: 8px 0 0;
+
+        &.add-mode--linked {
+            color: #50c878;
+        }
+    }
+
+    // Une fois une espèce reliée, la botanique est auto-remplie : on estompe le
+    // bloc « proposition » pour guider l'utilisateur vers la photo et la validation.
+    .collection-form[data-collection-add-form] {
+        [data-proposal-fields] {
+            transition: opacity 0.2s ease;
+        }
+    }
+}
+
+// Mode « lié » (posée par le JS sur la modale) : la botanique devient secondaire.
+.is-linked {
+    [data-proposal-fields] {
+        opacity: 0.65;
     }
 }
 
@@ -1375,5 +1655,137 @@
     .auth-form-container {
         padding: 20px;
         margin: 0 15px;
+    }
+}
+
+// ------------------------------
+// PAGE « PARAMÈTRES DE MA COLLECTION » — endroits de culture
+// ------------------------------
+.collection-params {
+    .page-title {
+        margin-bottom: 8px;
+    }
+
+    &__intro,
+    &__footnote {
+        max-width: 900px;
+        margin: 0 auto 24px;
+        color: rgba(255, 255, 255, 0.82);
+        font-family: $font-body;
+        font-size: 15px;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    &__list,
+    &__form {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto 32px;
+    }
+
+    &__form {
+        @include glass-effect;
+        padding: 24px;
+        border-radius: 12px;
+
+        .section-title {
+            margin-top: 0;
+        }
+    }
+}
+
+.count-badge {
+    display: inline-block;
+    min-width: 24px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: $clr-gold;
+    color: #0e2018;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    margin-left: 6px;
+}
+
+.emplacement-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+}
+
+.emplacement-item {
+    @include glass-effect;
+    padding: 18px 20px;
+    border-radius: 12px;
+
+    &__head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        h3 {
+            font-family: $font-titles;
+            color: $clr-gold;
+            font-size: 18px;
+            margin: 0;
+        }
+    }
+
+    &__plants {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    &__values {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px 18px;
+        margin: 0 0 14px;
+
+        div {
+            margin: 0;
+        }
+
+        dt {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+
+            i {
+                color: $clr-gold;
+                margin-right: 4px;
+            }
+        }
+
+        dd {
+            margin: 0;
+            color: $clr-white;
+            font-size: 15px;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+}
+
+// Grille 2 colonnes du formulaire d'endroit (température / hygrométrie / lumière…).
+.emplacement-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 18px;
+
+    @include respond-to('sm') {
+        grid-template-columns: 1fr;
     }
 }

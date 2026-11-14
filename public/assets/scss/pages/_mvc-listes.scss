@@ -20,7 +20,9 @@
 // pages MVC (.moderation-page, .notifications-page).
 .collection-page {
   width: 100%;
-  max-width: 1200px;
+  // Légèrement élargi (1280 vs 1200) pour que les cartes — surtout le tableau
+  // SOINS — aient l'espace de ne rien tronquer.
+  max-width: 1280px;
   margin: 0 auto $spacing-xl;
   padding: 0 $spacing-md;
   box-sizing: border-box;
@@ -32,6 +34,34 @@
   .page-title {
     text-align: center;
   }
+
+  // Le tableau de bord (conforme à la maquette) doit occuper toute la largeur,
+  // malgré « align-items: center » qui rétracterait sinon les grilles enfants.
+  > .collection-dashboard,
+  > .collection-workspace,
+  > .collection-add,
+  > .collection-rappels-entry {
+    width: 100%;
+  }
+}
+
+// Vignette d'une plante sans photo : pastille dorée (même gabarit qu'une image).
+.collection-thumb--noimg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 120px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: $clr-gold;
+  font-size: 34px;
+}
+
+// Ligne « aucun soin » du tableau SOINS.
+.care-empty {
+  text-align: center;
+  font-style: italic;
+  opacity: 0.75;
 }
 
 // --------------------------------------------------------------------------
@@ -87,7 +117,7 @@
 
 // La modération : une carte de proposition avec ses trois boutons d'action
 .moderation-card {
-  max-width: 280px;
+  max-width: 320px;
 }
 
 .moderation-page {
@@ -107,6 +137,74 @@
   margin-top: auto;
   justify-content: center;
   gap: $spacing-sm;
+}
+
+// --------------------------------------------------------------------------
+// Panneau de vérification d'une proposition (modération)
+// --------------------------------------------------------------------------
+// Le modérateur doit CONTROLER les caractéristiques botaniques avant de trancher :
+// je les expose en paire libellé/valeur, dans l'ordre de lecture, sans surcharger la
+// carte. Un champ non saisi à la proposition affiche « — » (à compléter via Éditer).
+.moderation-review {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px;
+  font-family: $font-body;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: $spacing-sm;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba($clr-white, 0.12);
+  }
+
+  dt {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.65;
+    flex-shrink: 0;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.85rem;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+}
+
+// Le formulaire d'approbation empile la case de certification puis le bouton :
+// la case DOIT se lire avant « Approuver » (obligation de vérifier).
+.moderation-approve {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.moderation-certify {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-family: $font-body;
+  font-size: 0.74rem;
+  line-height: 1.25;
+  cursor: pointer;
+  max-width: 200px;
+
+  input[type="checkbox"] {
+    // Cible tactile confortable (RGAA) et rappel de la charte dorée.
+    margin-top: 1px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    accent-color: $clr-gold;
+    cursor: pointer;
+  }
 }
 
 // --------------------------------------------------------------------------

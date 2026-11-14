@@ -339,7 +339,10 @@ function setupModals(allUsers) {
                 nom: document.getElementById('user-nom').value.trim(),
                 prenom: document.getElementById('user-prenom').value.trim(),
                 email: email,
-                password: original.password || "demouser",
+                // On conserve le mot de passe existant s'il y en a un ; aucun
+                // défaut en clair n'est injecté ici (l'authentification réelle
+                // est traitée côté serveur PHP, jamais avec un mot de passe codé).
+                password: original.password,
                 role: document.getElementById('user-role').value,
                 created: original.created || new Date().toLocaleDateString('fr-FR'),
                 modified: new Date().toLocaleDateString('fr-FR')

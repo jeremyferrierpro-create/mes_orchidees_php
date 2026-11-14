@@ -50,12 +50,30 @@ class ConseilController extends AbstractController
     {
         $query = trim((string) ($_GET['search'] ?? $_GET['q'] ?? ''));
 
-        $conseils = $query === ''
-            ? $this->conseils->findAll()
-            : $this->conseils->search($query);
+        // Conseils de base (type 'category') : repère toujours visible (cartes agrandies).
+        // En recherche, on ne garde que les bases pertinentes (comportement serveur historique).
+        $bases = $query === ''
+            ? $this->conseils->findByType('category')
+            : array_values(array_filter(
+                $this->conseils->search($query),
+                static fn(Conseil $c) => !$c->isSpecies()
+            ));
+
+        // Fiches par plante (type 'species') : jeu COMPLET envoyé à la vue pour que le
+        // module JS puisse filtrer en direct pendant la saisie. Sans JavaScript, seules
+        // les fiches correspondant à la recherche serveur sont révélées (repli progressif).
+        $especes        = $this->conseils->findByType('species');
+        $especesActives = $query === ''
+            ? []
+            : array_map(
+                static fn(Conseil $c) => $c->id,
+                array_filter($this->conseils->search($query), static fn(Conseil $c) => $c->isSpecies())
+            );
 
         return $this->render('pages/conseils/index', [
-            'conseils'         => $conseils,
+            'bases'            => $bases,
+            'especes'          => $especes,
+            'especesActives'   => $especesActives,
             'query'            => $query,
             'meta_description' => 'Conseils de culture des orchidées : arrosage, lumière, substrat, rempotage et fiches par espèce.',
         ], 'Conseils');

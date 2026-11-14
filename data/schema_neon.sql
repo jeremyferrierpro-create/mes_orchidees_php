@@ -394,10 +394,12 @@ COMMENT ON VIEW public.v_collection_complete IS 'Vue enrichie : remplace les joi
 -- SEED (depuis users.json — sans mots de passe en clair)
 -- ===========================================================================
 
+-- Comptes de demonstration ENTIEREMENT FICTIFS (alignes sur data/seeds/01_seed_users.sql).
+-- Domaine reserve example.com (RFC 2606) : jamais deliverable. Aucune donnee personnelle reelle.
 INSERT INTO public.users (nom, prenom, email, role) VALUES
-    ('Dupont',  'Jean-Marc', 'admin@mesorchidees.fr',       'user'),
-    ('FERRIER', 'Jeremy',    'jeremy.ferrierpro@gmail.com', 'admin'),
-    ('Martin',  'Jessica',   'jessica.amateur@gmail.com',   'user')
+    ('Exemple', 'Admin',       'admin@example.com',       'admin'),
+    ('Exemple', 'Utilisateur', 'utilisateur@example.com', 'user'),
+    ('Exemple', 'Moderateur',  'moderateur@example.com',  'moderateur')
 ON CONFLICT (email) DO NOTHING;
 
 -- Seed orchids, conseils, notifications : voir fichiers seed_*.sql separement

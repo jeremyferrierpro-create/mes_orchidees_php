@@ -112,14 +112,21 @@ class AuthController extends AbstractController
     }
 
     /**
-     * POST /logout — Déconnexion (grant : authentifié).
+     * POST /logout — Déconnexion (route publique, idempotente ; CSRF conservée).
      *
      * @return void
      */
     public function logout(): void
     {
-        $this->assertCsrf($_POST);
-        $this->auth->logout();
+        // Sécurité inchangée : dès qu'une VRAIE session existe, le jeton CSRF est
+        // exigé. Un POST forgé inter-site ne peut donc pas déconnecter un utilisateur
+        // authentifié sans connaître son jeton (CsrfException => 400, jamais de sortie).
+        if ($this->auth->isAuthenticated()) {
+            $this->assertCsrf($_POST);
+            $this->auth->logout();
+        }
+        // Anonyme / session expirée : il n'y a rien à protéger, on renvoie proprement
+        // vers une page publique au lieu d'un 403 bloquant le parcours de déconnexion.
         $this->redirectTo('/login');
     }
 

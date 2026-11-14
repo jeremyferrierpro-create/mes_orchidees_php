@@ -25,11 +25,12 @@ use PDO;
 class CollectionRepository
 {
     /** Colonnes de collection jointes à l'espèce (alias d'affichage `orchid_*`). */
-    private const SELECT_JOINED = 'SELECT c.id, c.legacy_id, c.user_id, c.orchid_id, c.location, c.notes,
+    private const SELECT_JOINED = 'SELECT c.id, c.legacy_id, c.user_id, c.orchid_id, c.emplacement_id, c.location, c.notes,
                                           c.temp, c.hygro, c.light, c.ventilation, c.photo,
                                           c.rappel_frequence_jours, c.rappel_actif,
                                           c.added_at, c.updated_at,
-                                          o.name AS orchid_name, o.vernacular AS orchid_vernacular, o.img AS orchid_img
+                                          o.name AS orchid_name, o.vernacular AS orchid_vernacular, o.img AS orchid_img,
+                                          o.behavior AS orchid_behavior
                                      FROM collections c
                                      JOIN orchids o ON o.id = c.orchid_id';
 
@@ -97,13 +98,14 @@ class CollectionRepository
         $id    = $this->uuid();
         $c->id = $id;
 
-        $sql = 'INSERT INTO collections (id, user_id, orchid_id, location, notes, temp, hygro, light, ventilation, photo, rappel_frequence_jours, rappel_actif)
-                VALUES (:id, :user_id, :orchid_id, :location, :notes, :temp, :hygro, :light, :ventilation, :photo, :rappel_frequence_jours, :rappel_actif)';
+        $sql = 'INSERT INTO collections (id, user_id, orchid_id, emplacement_id, location, notes, temp, hygro, light, ventilation, photo, rappel_frequence_jours, rappel_actif)
+                VALUES (:id, :user_id, :orchid_id, :emplacement_id, :location, :notes, :temp, :hygro, :light, :ventilation, :photo, :rappel_frequence_jours, :rappel_actif)';
         $stmt = $this->pdo()->prepare($sql);
         $stmt->execute([
             ':id'          => $id,
             ':user_id'     => $c->userId,
             ':orchid_id'   => $c->orchidId,
+            ':emplacement_id' => $c->emplacementId,
             ':location'    => $c->location,
             ':notes'       => $c->notes,
             ':temp'        => $c->temp,
@@ -141,7 +143,7 @@ class CollectionRepository
     public function updateForUser(Collection $c, string $userId): bool
     {
         $sql = 'UPDATE collections
-                   SET orchid_id = :orchid_id, location = :location, notes = :notes,
+                   SET orchid_id = :orchid_id, emplacement_id = :emplacement_id, location = :location, notes = :notes,
                        temp = :temp, hygro = :hygro, light = :light, ventilation = :ventilation,
                        photo = :photo, rappel_frequence_jours = :rappel_frequence_jours,
                        rappel_actif = :rappel_actif
@@ -149,6 +151,7 @@ class CollectionRepository
         $stmt = $this->pdo()->prepare($sql);
         $stmt->execute([
             ':orchid_id'   => $c->orchidId,
+            ':emplacement_id' => $c->emplacementId,
             ':location'    => $c->location,
             ':notes'       => $c->notes,
             ':temp'        => $c->temp,

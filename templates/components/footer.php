@@ -32,5 +32,14 @@
     <div id="rappels-toast-bootstrap" data-endpoint="<?= e(url('/api/rappels/dus')) ?>" hidden></div>
     <?php endif; ?>
 
+    <?php if (has_role(['admin', 'moderateur'])): ?>
+    <!-- Toast temps réel du modérateur : amorce du flux « nouvelles propositions à
+         modérer » (GET /api/notifications/propositions, GRANT_MODO). Rendu UNIQUEMENT
+         pour un admin/modérateur : un utilisateur ordinaire ne voit jamais cette amorce
+         (et la route lui répondrait 403). Absent = module features/moderation-toast.js
+         en no-op. Aucun CSRF ici : il voyage dans la réponse JSON authentifiée. -->
+    <div id="propositions-toast-bootstrap" data-endpoint="<?= e(url('/api/notifications/propositions')) ?>" hidden></div>
+    <?php endif; ?>
+
     <!-- Script principal de l'application -->
     <script type="module" src="<?= e(asset('assets/js/app.js')) ?>"></script>
